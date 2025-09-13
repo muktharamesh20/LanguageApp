@@ -132,13 +132,14 @@ export default function OnboardingScreen() {
     <View style={{ flex: 1, alignItems: "center", marginTop: insets.top + 130 }}>
     <Image
       source={images.butterfly}
-      style={{ width: '80%', height: 300, resizeMode: 'contain' }}
+      style={{ width: '70%', height: 300, resizeMode: 'contain' }}
     />
     <View style={styles.slide}>
-      <Text style={styles.title}>We're all set!</Text>
+      <Text className="py-4 font-semibold text-[40px] text-secondary w-full text-center">We're all set!</Text>
+      
       <Text style={styles.subtitle}>Start learning now.</Text>
       <TouchableOpacity
-        style={[styles.button, { marginBottom: 20 }]}
+        style={[styles.button, { marginTop: 30 }]}
         onPress={handleFinish}
         activeOpacity={0.8}
       >
@@ -278,11 +279,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   dotActive: {
-    backgroundColor: "#14354E",
+    backgroundColor: "#000000",
     width: 20,
   },
   button: {
-    backgroundColor: "#14354E",
+    backgroundColor: "#000000",
     marginHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 12,
