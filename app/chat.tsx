@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { sendToAnthropic } from "./services/anthropic";
 
 interface Message {
@@ -21,6 +24,9 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const insets = useSafeAreaInsets();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
@@ -59,71 +65,139 @@ export default function Chat() {
     }
   };
 
+  useEffect(() => {
+    scrollViewRef.current?.scrollToEnd({ animated: true });
+  }, [messages, isLoading]);
+
   const renderMessage = (message: Message) => (
     <View
       key={message.id}
-      className={`mb-3 ${message.isUser ? "items-end" : "items-start"}`}
+      style={{
+        marginBottom: 12,
+        alignSelf: message.isUser ? "flex-end" : "flex-start",
+        maxWidth: "75%",
+      }}
     >
       <View
-        className={`max-w-[80%] px-4 py-3 rounded-2xl ${
-          message.isUser
-            ? "bg-blue-500 rounded-br-md"
-            : "bg-gray-200 rounded-bl-md"
-        }`}
+        style={{
+          backgroundColor: message.isUser ? "#0D3B66" : "#E5E5E5",
+          paddingVertical: 12,
+          paddingHorizontal: 16,
+          borderRadius: 20,
+          borderBottomRightRadius: message.isUser ? 6 : 20,
+          borderBottomLeftRadius: message.isUser ? 20 : 6,
+          shadowColor: "#000",
+          shadowOpacity: 0.05,
+          shadowOffset: { width: 0, height: 1 },
+          shadowRadius: 2,
+          elevation: 2,
+        }}
       >
         <Text
-          className={`text-base ${
-            message.isUser ? "text-white" : "text-gray-800"
-          }`}
+          style={{
+            color: message.isUser ? "#FFF" : "#111",
+            fontSize: 16,
+            lineHeight: 22,
+          }}
         >
           {message.text}
         </Text>
       </View>
-      <Text className="text-xs text-gray-500 mt-1">
-        {message.timestamp.toLocaleTimeString()}
+      <Text
+        style={{
+          fontSize: 12,
+          color: "#888",
+          marginTop: 4,
+          alignSelf: message.isUser ? "flex-end" : "flex-start",
+        }}
+      >
+        {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
       </Text>
     </View>
   );
 
   return (
-    <View className="flex-1 bg-white">
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: "#FFF" }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? -10 : 0}
+    >
       {/* Header */}
-      <View className="bg-blue-500 px-4 py-6 pt-12">
-        <Text className="text-white text-xl font-bold text-center">
-          🐰 Language App Chat
+      <View
+        style={{
+          paddingTop: insets.top + 16,
+          paddingBottom: 16,
+          backgroundColor: "#0D3B66",
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowOffset: { width: 0, height: 2 },
+          shadowRadius: 4,
+          elevation: 4,
+        }}
+      >
+        <Text style={{ color: "#FFF", fontSize: 20, fontWeight: "bold" }}>
+          Language App Chat
         </Text>
       </View>
 
       {/* Messages */}
       <ScrollView
-        className="flex-1 px-4 py-4"
-        contentContainerStyle={{ paddingBottom: 20 }}
+        ref={scrollViewRef}
+        style={{ flex: 1, paddingHorizontal: 16, paddingTop: 12 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}
       >
-        {messages.length === 0 ? (
-          <View className="flex-1 justify-center items-center mt-20">
-            <Text className="text-gray-500 text-center text-lg">
+        {messages.length === 0 && !isLoading && (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 40 }}>
+            <Text style={{ color: "#888", fontSize: 16, textAlign: "center" }}>
               Start a conversation by typing a message below
             </Text>
           </View>
-        ) : (
-          messages.map(renderMessage)
         )}
 
+        {messages.map(renderMessage)}
+
         {isLoading && (
-          <View className="items-start mb-3">
-            <View className="bg-gray-200 px-4 py-3 rounded-2xl rounded-bl-md">
-              <ActivityIndicator size="small" color="#6B7280" />
+          <View style={{ alignSelf: "flex-start", marginBottom: 12 }}>
+            <View
+              style={{
+                backgroundColor: "#E5E5E5",
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderRadius: 20,
+                borderBottomLeftRadius: 6,
+              }}
+            >
+              <ActivityIndicator size="small" color="#888" />
             </View>
           </View>
         )}
       </ScrollView>
 
       {/* Input Area */}
-      <View className="px-4 py-4 bg-white border-t border-gray-200">
-        <View className="flex-row items-end space-x-3">
+      <View
+        style={{
+          paddingBottom: insets.bottom + 12,
+          paddingHorizontal: 16,
+          paddingTop: 8,
+          borderTopWidth: 1,
+          borderTopColor: "#E5E5E5",
+          backgroundColor: "#FFF",
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 12 }}>
           <TextInput
-            className="flex-1 bg-gray-100 rounded-2xl px-4 py-3 text-base min-h-[48px] max-h-[120px]"
-            placeholder="Type your message..."
+            style={{
+              flex: 1,
+              backgroundColor: "#F5F5F5",
+              borderRadius: 24,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              fontSize: 16,
+              maxHeight: 120,
+              minHeight: 48,
+            }}
+            placeholder="Type a message..."
             value={inputText}
             onChangeText={setInputText}
             multiline
@@ -131,16 +205,21 @@ export default function Chat() {
             onSubmitEditing={sendMessage}
           />
           <TouchableOpacity
-            className={`w-12 h-12 rounded-full justify-center items-center ${
-              inputText.trim() && !isLoading ? "bg-blue-500" : "bg-gray-300"
-            }`}
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 24,
+              backgroundColor: inputText.trim() && !isLoading ? "#0D3B66" : "#CCC",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
             onPress={sendMessage}
             disabled={!inputText.trim() || isLoading}
           >
-            <Text className="text-white font-bold text-lg">→</Text>
+            <Text style={{ color: "#FFF", fontWeight: "bold", fontSize: 20 }}>→</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
