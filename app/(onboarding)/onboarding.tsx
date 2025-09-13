@@ -1,21 +1,23 @@
-import { images } from '@/constants/images';
-import { useIsFocused } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Link, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import { images } from "@/constants/images";
+import { useIsFocused } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Link, useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 import {
-    Image,
-    StyleSheet, Text,
-    TextStyle,
-    TouchableOpacity, View
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  Image,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const baseTextStyle: TextStyle = {
-  color: 'white',
-  textAlign: 'center',
-  fontFamily: 'System',
+  color: "white",
+  textAlign: "center",
+  fontFamily: "System",
 };
 
 const Onboarding = () => {
@@ -26,25 +28,26 @@ const Onboarding = () => {
 
   return (
     <LinearGradient
-      colors={['#FFFFFF', '#FFFFFF']}
-      style={{ flex: 1, alignItems: 'center' }}
+      colors={["#FFFFFF", "#FFFFFF"]}
+      style={{ flex: 1, alignItems: "center" }}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
       {isFocused ? <StatusBar style="light" /> : null}
 
       {/* Help button in upper right */}
-      <View style={{
-        position: 'absolute',
-        top: insets.top + 15,
-        right: 20,
-        zIndex: 10,
-      }}>
+      <View
+        style={{
+          position: "absolute",
+          top: insets.top + 15,
+          right: 20,
+          zIndex: 10,
+        }}
+      >
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text className='text-primary text-lg font-semibold'>Help</Text>
+          <Text className="text-primary text-lg font-semibold">Help</Text>
         </TouchableOpacity>
       </View>
-
 
       {/* Main content */}
       <View
@@ -53,7 +56,7 @@ const Onboarding = () => {
       >
         <Image
           source={images.bunnyLanguage}
-          style={{ width: '80%', height: 300, resizeMode: 'contain' }}
+          style={{ width: "80%", height: 300, resizeMode: "contain" }}
         />
 
         <Text className="py-4 font-semibold text-[40px] text-secondary w-full text-center">
@@ -66,42 +69,78 @@ const Onboarding = () => {
 
       <View
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: 0,
           right: 0,
           bottom: insets.bottom + 30,
-          alignItems: 'center',
+          alignItems: "center",
           zIndex: 20,
         }}
       >
-        <Link href={'/(onboardingSlides)/onboard'} asChild>
-        <TouchableOpacity style={{ width: '80%', alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{
-            paddingVertical: 16,
-            backgroundColor: '#F9F8F5',
-            borderRadius: 16,
-            fontWeight: 'bold',
-            fontSize: 20,
-            color: '#14354E',
-            width: '100%',
-            textAlign: 'center'
-          }}>
-            Get Started
-          </Text>
-        </TouchableOpacity>
+        <Link href={"/(onboardingSlides)/onboard"} asChild>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#000000",
+              marginHorizontal: 32,
+              paddingVertical: 16,
+              borderRadius: 12,
+              alignItems: "center",
+              width: "80%",
+            }}
+          >
+            <Text
+              style={{
+                color: "#FFF",
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
+              Get Started
+            </Text>
+          </TouchableOpacity>
         </Link>
 
-        <Text style={{ ...baseTextStyle, fontSize: 18, marginTop: 10, marginBottom: 8, fontWeight: '600' }}>
-          Already have an account?{' '}
+        <Text
+          style={{
+            ...baseTextStyle,
+            fontSize: 18,
+            marginTop: 10,
+            marginBottom: 8,
+            fontWeight: "600",
+          }}
+        >
+          Already have an account?{" "}
         </Text>
 
-        <Text style={{ ...baseTextStyle, fontSize: 9, marginHorizontal: 16, marginTop: 25, width: 200 }}>
-          By continuing, you agree to the Tempest{' '}
-          <Link href="https://google.com" style={{ textDecorationLine: 'underline', color: 'white', fontWeight: 'bold' }}>
+        <Text
+          style={{
+            ...baseTextStyle,
+            fontSize: 9,
+            marginHorizontal: 16,
+            marginTop: 25,
+            width: 200,
+          }}
+        >
+          By continuing, you agree to the Tempest{" "}
+          <Link
+            href="https://google.com"
+            style={{
+              textDecorationLine: "underline",
+              color: "white",
+              fontWeight: "bold",
+            }}
+          >
             Terms of Service
-          </Link>
-          {' '}and{' '}
-          <Link href="https://google.com" style={{ textDecorationLine: 'underline', color: 'white', fontWeight: 'bold' }}>
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="https://google.com"
+            style={{
+              textDecorationLine: "underline",
+              color: "white",
+              fontWeight: "bold",
+            }}
+          >
             Privacy Policy
           </Link>
         </Text>
@@ -112,24 +151,23 @@ const Onboarding = () => {
 
 export default Onboarding;
 
-
 const styles = StyleSheet.create({
-    container: {
-      marginTop: 60,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    flipCard: {
-      backfaceVisibility: 'hidden',
-    },
-    text: {
-      fontSize: 20,
-      fontWeight: 'bold',
-    },
-    typeText: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: 'white',
-      textAlign: 'center',
-    },
-  });
+  container: {
+    marginTop: 60,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  flipCard: {
+    backfaceVisibility: "hidden",
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  typeText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+  },
+});
