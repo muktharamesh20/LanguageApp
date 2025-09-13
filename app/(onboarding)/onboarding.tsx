@@ -86,9 +86,10 @@ const Onboarding = () => {
             width: '100%',
             textAlign: 'center'
           }}>
-            Get Started
+            Sign Up
           </Text>
         </TouchableOpacity>
+        
         </Link>
 
         <Text style={{ ...baseTextStyle, fontSize: 18, marginTop: 10, marginBottom: 8, fontWeight: '600' }}>
