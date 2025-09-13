@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import MarkdownText from "../components/MarkdownText";
 import { sendToAnthropic, UserContext } from "./services/anthropic";
 
 interface Message {
@@ -149,15 +150,19 @@ export default function Chat() {
           elevation: 2,
         }}
       >
-        <Text
-          style={{
-            color: message.isUser ? "#FFF" : "#111",
-            fontSize: 16,
-            lineHeight: 22,
-          }}
-        >
-          {message.text}
-        </Text>
+        {message.isUser ? (
+          <Text
+            style={{
+              color: "#FFF",
+              fontSize: 16,
+              lineHeight: 22,
+            }}
+          >
+            {message.text}
+          </Text>
+        ) : (
+          <MarkdownText isUser={false}>{message.text}</MarkdownText>
+        )}
       </View>
       <Text
         style={{
