@@ -150,7 +150,7 @@ export default function OnboardingScreen() {
           <TouchableOpacity
             style={[styles.button, { marginBottom: 20 }]}
             onPress={handleFinish}
-            activeOpacity={0.8}
+            activeOpacity={1}
           >
             <Text style={styles.buttonText}>Let's go!</Text>
           </TouchableOpacity>
@@ -286,11 +286,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   dotActive: {
-    backgroundColor: "#14354E",
+    backgroundColor: "#000000",
     width: 20,
   },
   button: {
-    backgroundColor: "#14354E",
+    backgroundColor: "#000000",
     marginHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 12,
