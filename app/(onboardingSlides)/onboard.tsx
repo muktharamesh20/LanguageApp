@@ -1,13 +1,13 @@
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
-    Dimensions,
-    FlatList,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -44,7 +44,9 @@ export default function OnboardingScreen() {
       key: "2",
       render: () => (
         <View style={styles.slide}>
-          <Text style={styles.title}>What language would you like to learn?</Text>
+          <Text style={styles.title}>
+            What language would you like to learn?
+          </Text>
           <TextInput
             style={styles.input}
             placeholder="Language here"
@@ -62,10 +64,7 @@ export default function OnboardingScreen() {
           {["Beginner", "Intermediate", "Advanced"].map((lvl) => (
             <TouchableOpacity
               key={lvl}
-              style={[
-                styles.choice,
-                level === lvl && styles.choiceActive,
-              ]}
+              style={[styles.choice, level === lvl && styles.choiceActive]}
               onPress={() => setLevel(lvl)}
             >
               <Text
@@ -89,11 +88,10 @@ export default function OnboardingScreen() {
       flatListRef.current?.scrollToIndex({ index: newIndex, animated: true });
       setCurrentIndex(newIndex); // 👈 put this back
     } else {
-      router.replace("/(tabs)/home");
+      // Navigate to chat page after finishing onboarding
+      router.push("/chat" as any);
     }
-  
   };
-  
 
   const onMomentumScrollEnd = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
@@ -104,24 +102,23 @@ export default function OnboardingScreen() {
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom + 40 }]}>
       <FlatList
-  data={slides}
-  ref={flatListRef}
-  horizontal
-  pagingEnabled
-  //scrollEnabled={false}
-  showsHorizontalScrollIndicator={false}
-  keyExtractor={(item) => item.key}
-  renderItem={({ item }) => (
-    <View style={{ width }}>{item.render()}</View>
-  )}
-  getItemLayout={(_, index) => ({
-    length: width,
-    offset: width * index,
-    index,
-  })}
-  onMomentumScrollEnd={onMomentumScrollEnd}
-/>
-
+        data={slides}
+        ref={flatListRef}
+        horizontal
+        pagingEnabled
+        //scrollEnabled={false}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => (
+          <View style={{ width }}>{item.render()}</View>
+        )}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+      />
 
       {/* dots */}
       <View style={styles.dotsContainer}>
@@ -134,12 +131,15 @@ export default function OnboardingScreen() {
       </View>
 
       {/* next / finish button */}
-      <TouchableOpacity style={styles.button} onPress={handleNext} activeOpacity={0.8}>
-  <Text style={styles.buttonText}>
-    {currentIndex === slides.length - 1 ? "Finish" : "Next"}
-  </Text>
-</TouchableOpacity>
-
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleNext}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.buttonText}>
+          {currentIndex === slides.length - 1 ? "Finish" : "Next"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
