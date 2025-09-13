@@ -1,6 +1,6 @@
-import { images } from '@/constants/images';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Image } from 'expo-image';
+import { images } from "@/constants/images";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
@@ -10,7 +10,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -26,22 +26,23 @@ export default function OnboardingScreen() {
   const [name, setName] = useState("");
   const [language, setLanguage] = useState("");
   const [level, setLevel] = useState("");
+  const [purpose, setPurpose] = useState("");
 
   const handleFinish = async () => {
     try {
-      if (!name || !language || !level) {
+      if (!name || !language || !level || !purpose) {
         alert("Please complete all fields.");
         return;
       }
-      await AsyncStorage.setItem('@user_name', name);
-      await AsyncStorage.setItem('@user_language', language);
-      await AsyncStorage.setItem('@user_level', level);
-      router.push('/chat'); // navigate to main app
+      await AsyncStorage.setItem("@user_name", name);
+      await AsyncStorage.setItem("@user_language", language);
+      await AsyncStorage.setItem("@user_level", level);
+      await AsyncStorage.setItem("@user_purpose", purpose);
+      router.push("/chat"); // navigate to main app
     } catch (e) {
       console.error("Failed to save user data:", e);
     }
   };
-  
 
   const slides = [
     {
@@ -104,39 +105,46 @@ export default function OnboardingScreen() {
       render: () => (
         <View style={styles.slide}>
           <Text style={styles.title}>Why are you learning?</Text>
-          {["Family", "Career", "School", "Hobby", "Other"].map((lvl) => (
-            <TouchableOpacity
-              key={lvl}
-              style={[level === lvl ? styles.choiceActive : styles.choice]}
-              onPress={() => {setLevel(lvl)}} 
-            >
-              <Text
+          {["Family", "Career", "School", "Hobby", "Other"].map(
+            (purposeOption) => (
+              <TouchableOpacity
+                key={purposeOption}
                 style={[
-                  styles.choiceText,
-                  level === lvl ? styles.choiceTextActive : styles.choiceText,
+                  purpose === purposeOption
+                    ? styles.choiceActive
+                    : styles.choice,
                 ]}
+                onPress={() => {
+                  setPurpose(purposeOption);
+                }}
               >
-                {lvl.toUpperCase()}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  style={[
+                    styles.choiceText,
+                    purpose === purposeOption
+                      ? styles.choiceTextActive
+                      : styles.choiceText,
+                  ]}
+                >
+                  {purposeOption.toUpperCase()}
+                </Text>
+              </TouchableOpacity>
+            )
+          )}
         </View>
       ),
-    }
-    ,
+    },
     {
       key: "5",
       render: () => (
-        
         <View style={styles.slide}>
           <Text style={styles.title}>We're all set!</Text>
           <Text style={styles.subtitle}>Let us know your name.</Text>
 
           <Image
-          source={images.butterfly}
-          style={{ width: '80%', height: 300, resizeMode: 'contain' }}
+            source={images.butterfly}
+            style={{ width: "80%", height: 300, resizeMode: "contain" }}
           />
-
 
           <TouchableOpacity
             style={[styles.button, { marginBottom: 20 }]}
@@ -147,9 +155,8 @@ export default function OnboardingScreen() {
           </TouchableOpacity>
         </View>
       ),
-    }
+    },
   ];
-
 
   const onMomentumScrollEnd = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;

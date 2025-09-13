@@ -11,6 +11,13 @@ export interface AnthropicResponse {
   error?: string;
 }
 
+export interface UserContext {
+  name: string;
+  language: string;
+  level: string;
+  purpose: string;
+}
+
 // For now, this is a placeholder implementation
 // To use the real Anthropic API, you'll need to:
 // 1. Install: npm install @anthropic-ai/sdk
@@ -46,14 +53,26 @@ export interface AnthropicResponse {
 const N8N_WEBHOOK_URL =
   "https://n8n.astroroles.com/webhook/441ad769-9c31-4a66-9eda-dc895bbb8b86";
 
+const createSystemPrompt = (userContext: UserContext): string => {
+  return `You are a language learning assistant. Your student, ${userContext.name}, wants to learn ${userContext.language} at ${userContext.level} level. The student is mainly looking to learn the language for ${userContext.purpose} purposes. You should provide the user with lessons and exercises in the target language that are appropriate to the level and purpose.`;
+};
+
 export const sendToAnthropic = async (
-  message: string
+  message: string,
+  userContext?: UserContext
 ): Promise<AnthropicResponse> => {
   try {
-    console.log("Sending message to n8n:", message);
+    // Create the full prompt with system context if user context is provided
+    let fullPrompt = message;
+    if (userContext) {
+      const systemPrompt = createSystemPrompt(userContext);
+      fullPrompt = `${systemPrompt}\n\nUser message: ${message}`;
+    }
+
+    console.log("Sending message to n8n:", fullPrompt);
 
     // Encode the message for URL parameters
-    const encodedMessage = encodeURIComponent(message);
+    const encodedMessage = encodeURIComponent(fullPrompt);
     const fullUrl = `${N8N_WEBHOOK_URL}?prompt=${encodedMessage}`;
 
     console.log("Full URL:", fullUrl);

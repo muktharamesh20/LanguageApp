@@ -7,5 +7,3 @@ export const images = {
   bunnyLanguage,
   butterfly,
 };
-
-

@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { sendToAnthropic } from "./services/anthropic";
+import { sendToAnthropic, UserContext } from "./services/anthropic";
 
 interface Message {
   id: string;
@@ -29,27 +29,32 @@ export default function Chat() {
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const [name, setName] = useState('');
-  const [language, setLanguage] = useState('');
-  const [level, setLevel] = useState('');
+  const [name, setName] = useState("");
+  const [language, setLanguage] = useState("");
+  const [level, setLevel] = useState("");
+  const [purpose, setPurpose] = useState("");
 
   useEffect(() => {
     const loadUserData = async () => {
-      const storedName = await AsyncStorage.getItem('@user_name');
-      const storedLanguage = await AsyncStorage.getItem('@user_language');
-      const storedLevel = await AsyncStorage.getItem('@user_level');
-      if (storedName && storedLanguage && storedLevel) {
+      const storedName = await AsyncStorage.getItem("@user_name");
+      const storedLanguage = await AsyncStorage.getItem("@user_language");
+      const storedLevel = await AsyncStorage.getItem("@user_level");
+      const storedPurpose = await AsyncStorage.getItem("@user_purpose");
+      if (storedName && storedLanguage && storedLevel && storedPurpose) {
         setName(storedName);
         setLanguage(storedLanguage);
         setLevel(storedLevel);
-      }else {
-        Alert.alert("User data missing", "Please complete the onboarding process.");
+        setPurpose(storedPurpose);
+      } else {
+        Alert.alert(
+          "User data missing",
+          "Please complete the onboarding process."
+        );
       }
-      console.log(storedName, storedLanguage, storedLevel);
+      console.log(storedName, storedLanguage, storedLevel, storedPurpose);
     };
     loadUserData();
   }, []);
-
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
@@ -66,7 +71,15 @@ export default function Chat() {
     setIsLoading(true);
 
     try {
-      const response = await sendToAnthropic(userMessage.text);
+      // Create user context for the system prompt
+      const userContext: UserContext = {
+        name,
+        language,
+        level,
+        purpose,
+      };
+
+      const response = await sendToAnthropic(userMessage.text, userContext);
 
       if (response.error) {
         Alert.alert("Error", response.error);
@@ -134,7 +147,10 @@ export default function Chat() {
           alignSelf: message.isUser ? "flex-end" : "flex-start",
         }}
       >
-        {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        {message.timestamp.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
       </Text>
     </View>
   );
@@ -171,7 +187,14 @@ export default function Chat() {
         contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}
       >
         {messages.length === 0 && !isLoading && (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 40 }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 40,
+            }}
+          >
             <Text style={{ color: "#888", fontSize: 16, textAlign: "center" }}>
               Start a conversation by typing a message below
             </Text>
@@ -232,14 +255,17 @@ export default function Chat() {
               width: 48,
               height: 48,
               borderRadius: 24,
-              backgroundColor: inputText.trim() && !isLoading ? "#0D3B66" : "#CCC",
+              backgroundColor:
+                inputText.trim() && !isLoading ? "#0D3B66" : "#CCC",
               justifyContent: "center",
               alignItems: "center",
             }}
             onPress={sendMessage}
             disabled={!inputText.trim() || isLoading}
           >
-            <Text style={{ color: "#FFF", fontWeight: "bold", fontSize: 20 }}>→</Text>
+            <Text style={{ color: "#FFF", fontWeight: "bold", fontSize: 20 }}>
+              →
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
