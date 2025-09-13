@@ -18,6 +18,11 @@ export interface UserContext {
   purpose: string;
 }
 
+export interface ConversationMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 // For now, this is a placeholder implementation
 // To use the real Anthropic API, you'll need to:
 // 1. Install: npm install @anthropic-ai/sdk
@@ -59,7 +64,8 @@ const createSystemPrompt = (userContext: UserContext): string => {
 
 export const sendToAnthropic = async (
   message: string,
-  userContext?: UserContext
+  userContext?: UserContext,
+  conversationHistory?: ConversationMessage[]
 ): Promise<AnthropicResponse> => {
   try {
     // Create the full prompt with system context if user context is provided
@@ -67,6 +73,19 @@ export const sendToAnthropic = async (
     if (userContext) {
       const systemPrompt = createSystemPrompt(userContext);
       fullPrompt = `${systemPrompt}\n\nUser message: ${message}`;
+    }
+
+    // Add conversation history if provided
+    if (conversationHistory && conversationHistory.length > 0) {
+      // Limit conversation history to last 10 messages to avoid URL length issues
+      const recentHistory = conversationHistory.slice(-10);
+      const historyText = recentHistory
+        .map(
+          (msg) =>
+            `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
+        )
+        .join("\n\n");
+      fullPrompt = `${fullPrompt}\n\nPrevious conversation:\n${historyText}`;
     }
 
     console.log("Sending message to n8n:", fullPrompt);

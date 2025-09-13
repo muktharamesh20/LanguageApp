@@ -12,7 +12,11 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MarkdownText from "../components/MarkdownText";
-import { sendToAnthropic, UserContext } from "./services/anthropic";
+import {
+  ConversationMessage,
+  sendToAnthropic,
+  UserContext,
+} from "./services/anthropic";
 
 interface Message {
   id: string;
@@ -100,7 +104,19 @@ export default function Chat() {
         purpose,
       };
 
-      const response = await sendToAnthropic(userMessage.text, userContext);
+      // Convert existing messages to conversation history format
+      const conversationHistory: ConversationMessage[] = messages.map(
+        (msg) => ({
+          role: msg.isUser ? "user" : "assistant",
+          content: msg.text,
+        })
+      );
+
+      const response = await sendToAnthropic(
+        userMessage.text,
+        userContext,
+        conversationHistory
+      );
 
       if (response.error) {
         Alert.alert("Error", response.error);
