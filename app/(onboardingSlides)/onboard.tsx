@@ -140,20 +140,19 @@ export default function OnboardingScreen() {
       key: "5",
       render: () => (
         <View style={styles.slide}>
-          <Text style={styles.title}>We're all set!</Text>
-          <Text style={styles.subtitle}>Let us know your name.</Text>
-
           <Image
             source={images.butterfly}
             style={{ width: "80%", height: 300, resizeMode: "contain" }}
           />
+          <Text style={styles.title}>We're all set!</Text>
+          <Text style={styles.subtitle}>Start learning now.</Text>
 
           <TouchableOpacity
             style={[styles.button, { marginBottom: 20 }]}
             onPress={handleFinish}
             activeOpacity={0.8}
           >
-            <Text style={styles.buttonText}>Start Learning</Text>
+            <Text style={styles.buttonText}>Let's go!</Text>
           </TouchableOpacity>
         </View>
       ),
