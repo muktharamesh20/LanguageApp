@@ -64,7 +64,7 @@ export default function OnboardingScreen() {
           {["Beginner", "Intermediate", "Advanced"].map((lvl) => (
             <TouchableOpacity
               key={lvl}
-              style={[styles.choice, level === lvl && styles.choiceActive]}
+              style={[level === lvl ? styles.choiceActive : styles.choice]}
               onPress={() => setLevel(lvl)}
             >
               <Text
@@ -80,15 +80,42 @@ export default function OnboardingScreen() {
         </View>
       ),
     },
+    {
+      key: "4",
+      render: () => (
+        <View style={styles.slide}>
+          <Text style={styles.title}>Why are you learning?</Text>
+          {["Family", "Career", "School", "Hobby", "Other"].map((lvl) => (
+            <TouchableOpacity
+              key={lvl}
+              style={level === lvl ? styles.choiceActive : styles.choice}
+              onPress={() => { setLevel(lvl); router.navigate("/chat" as any); }}
+            >
+              <Text
+                style={[
+                  styles.choiceText,
+                  level === lvl && styles.choiceTextActive,
+                ]}
+              >
+                {lvl.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ),
+    }
   ];
 
   const handleNext = () => {
     if (currentIndex < slides.length - 1) {
       const newIndex = currentIndex + 1;
-      flatListRef.current?.scrollToIndex({ index: newIndex, animated: true });
-      setCurrentIndex(newIndex); // 👈 put this back
+      flatListRef.current?.scrollToItem({ item: newIndex, animated: true });
+      setCurrentIndex(newIndex);
+      // Delay updating currentIndex slightly to match scroll animation
+      setTimeout(() => {
+        setCurrentIndex(newIndex);
+      }, 300); // 300ms matches default FlatList scroll duration
     } else {
-      // Navigate to chat page after finishing onboarding
       router.push("/chat" as any);
     }
   };
@@ -131,6 +158,7 @@ export default function OnboardingScreen() {
       </View>
 
       {/* next / finish button */}
+      {/* {currentIndex === slides.length - 1 && (
       <TouchableOpacity
         style={styles.button}
         onPress={handleNext}
@@ -139,7 +167,7 @@ export default function OnboardingScreen() {
         <Text style={styles.buttonText}>
           {currentIndex === slides.length - 1 ? "Finish" : "Next"}
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity>)} */}
     </View>
   );
 }
@@ -177,15 +205,24 @@ const styles = StyleSheet.create({
   },
   choice: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#000",
     borderRadius: 10,
     paddingVertical: 14,
     paddingHorizontal: 16,
     marginVertical: 6,
   },
+  // choiceActive: {
+  //   backgroundColor: "#000",
+  //   borderColor: "#000000",
+  // },
   choiceActive: {
-    backgroundColor: "#14354E",
-    borderColor: "#14354E",
+    borderWidth: 1,
+    backgroundColor: "#000",
+    borderColor: "#000",
+    borderRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginVertical: 6,
   },
   choiceText: {
     textAlign: "center",
