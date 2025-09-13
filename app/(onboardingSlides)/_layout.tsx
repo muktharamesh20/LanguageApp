@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
-import './globals.css';
 
-export default function RootLayout() {
+export default function OnboardingLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }} />
   );
