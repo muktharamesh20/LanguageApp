@@ -11,7 +11,12 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { sendToAnthropic, UserContext } from "./services/anthropic";
+import MarkdownText from "../components/MarkdownText";
+import {
+  ConversationMessage,
+  sendToAnthropic,
+  UserContext,
+} from "./services/anthropic";
 
 interface Message {
   id: string;
@@ -99,7 +104,19 @@ export default function Chat() {
         purpose,
       };
 
-      const response = await sendToAnthropic(userMessage.text, userContext);
+      // Convert existing messages to conversation history format
+      const conversationHistory: ConversationMessage[] = messages.map(
+        (msg) => ({
+          role: msg.isUser ? "user" : "assistant",
+          content: msg.text,
+        })
+      );
+
+      const response = await sendToAnthropic(
+        userMessage.text,
+        userContext,
+        conversationHistory
+      );
 
       if (response.error) {
         Alert.alert("Error", response.error);
@@ -149,15 +166,19 @@ export default function Chat() {
           elevation: 2,
         }}
       >
-        <Text
-          style={{
-            color: message.isUser ? "#FFF" : "#111",
-            fontSize: 16,
-            lineHeight: 22,
-          }}
-        >
-          {message.text}
-        </Text>
+        {message.isUser ? (
+          <Text
+            style={{
+              color: "#FFF",
+              fontSize: 16,
+              lineHeight: 22,
+            }}
+          >
+            {message.text}
+          </Text>
+        ) : (
+          <MarkdownText isUser={false}>{message.text}</MarkdownText>
+        )}
       </View>
       <Text
         style={{
