@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -27,6 +28,28 @@ export default function Chat() {
 
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
+
+  const [name, setName] = useState('');
+  const [language, setLanguage] = useState('');
+  const [level, setLevel] = useState('');
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      const storedName = await AsyncStorage.getItem('@user_name');
+      const storedLanguage = await AsyncStorage.getItem('@user_language');
+      const storedLevel = await AsyncStorage.getItem('@user_level');
+      if (storedName && storedLanguage && storedLevel) {
+        setName(storedName);
+        setLanguage(storedLanguage);
+        setLevel(storedLevel);
+      }else {
+        Alert.alert("User data missing", "Please complete the onboarding process.");
+      }
+      console.log(storedName, storedLanguage, storedLevel);
+    };
+    loadUserData();
+  }, []);
+
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;

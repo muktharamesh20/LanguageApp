@@ -60,7 +60,7 @@ const Onboarding = () => {
           Hi there!
         </Text>
         <Text className="py-2 font-small text-[15px] text-secondary w-80 text-center">
-          Language App is here to assit you with your language needs.
+          Language App is here to assist you with your language needs.
         </Text>
       </View>
 

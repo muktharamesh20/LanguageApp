@@ -1,3 +1,6 @@
+import { images } from '@/constants/images';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Image } from 'expo-image';
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
@@ -7,7 +10,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -23,6 +26,22 @@ export default function OnboardingScreen() {
   const [name, setName] = useState("");
   const [language, setLanguage] = useState("");
   const [level, setLevel] = useState("");
+
+  const handleFinish = async () => {
+    try {
+      if (!name || !language || !level) {
+        alert("Please complete all fields.");
+        return;
+      }
+      await AsyncStorage.setItem('@user_name', name);
+      await AsyncStorage.setItem('@user_language', language);
+      await AsyncStorage.setItem('@user_level', level);
+      router.push('/chat'); // navigate to main app
+    } catch (e) {
+      console.error("Failed to save user data:", e);
+    }
+  };
+  
 
   const slides = [
     {
@@ -70,7 +89,7 @@ export default function OnboardingScreen() {
               <Text
                 style={[
                   styles.choiceText,
-                  level === lvl && styles.choiceTextActive,
+                  level === lvl ? styles.choiceTextActive : styles.choiceText,
                 ]}
               >
                 {lvl.toUpperCase()}
@@ -88,13 +107,13 @@ export default function OnboardingScreen() {
           {["Family", "Career", "School", "Hobby", "Other"].map((lvl) => (
             <TouchableOpacity
               key={lvl}
-              style={level === lvl ? styles.choiceActive : styles.choice}
-              onPress={() => { setLevel(lvl); router.navigate("/chat" as any); }}
+              style={[level === lvl ? styles.choiceActive : styles.choice]}
+              onPress={() => {setLevel(lvl)}} 
             >
               <Text
                 style={[
                   styles.choiceText,
-                  level === lvl && styles.choiceTextActive,
+                  level === lvl ? styles.choiceTextActive : styles.choiceText,
                 ]}
               >
                 {lvl.toUpperCase()}
@@ -104,21 +123,33 @@ export default function OnboardingScreen() {
         </View>
       ),
     }
+    ,
+    {
+      key: "5",
+      render: () => (
+        
+        <View style={styles.slide}>
+          <Text style={styles.title}>We're all set!</Text>
+          <Text style={styles.subtitle}>Let us know your name.</Text>
+
+          <Image
+          source={images.butterfly}
+          style={{ width: '80%', height: 300, resizeMode: 'contain' }}
+          />
+
+
+          <TouchableOpacity
+            style={[styles.button, { marginBottom: 20 }]}
+            onPress={handleFinish}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.buttonText}>Start Learning</Text>
+          </TouchableOpacity>
+        </View>
+      ),
+    }
   ];
 
-  const handleNext = () => {
-    if (currentIndex < slides.length - 1) {
-      const newIndex = currentIndex + 1;
-      flatListRef.current?.scrollToItem({ item: newIndex, animated: true });
-      setCurrentIndex(newIndex);
-      // Delay updating currentIndex slightly to match scroll animation
-      setTimeout(() => {
-        setCurrentIndex(newIndex);
-      }, 300); // 300ms matches default FlatList scroll duration
-    } else {
-      router.push("/chat" as any);
-    }
-  };
 
   const onMomentumScrollEnd = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
