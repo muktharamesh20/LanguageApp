@@ -159,7 +159,7 @@ export default function Chat() {
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: "#FFF" }}
       behavior={Platform.OS === "ios" ? "padding" : "padding"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? -10 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? -10 : -40}
     >
       {/* Header */}
       <View
