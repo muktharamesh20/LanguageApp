@@ -86,6 +86,7 @@ export default function OnboardingScreen() {
               key={lvl}
               style={[level === lvl ? styles.choiceActive : styles.choice]}
               onPress={() => setLevel(lvl)}
+              activeOpacity={1}
             >
               <Text
                 style={[
@@ -117,6 +118,7 @@ export default function OnboardingScreen() {
                 onPress={() => {
                   setPurpose(purposeOption);
                 }}
+                activeOpacity={1}
               >
                 <Text
                   style={[
@@ -285,11 +287,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   dotActive: {
-    backgroundColor: "#000000",
+    backgroundColor: "#14354E",
     width: 20,
   },
   button: {
-    backgroundColor: "#000000",
+    backgroundColor: "#14354E",
     marginHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 12,
