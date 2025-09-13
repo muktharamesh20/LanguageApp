@@ -144,11 +144,11 @@ export default function OnboardingScreen() {
             source={images.butterfly}
             style={{ width: "80%", height: 300, resizeMode: "contain" }}
           />
-          <Text style={styles.title}>We're all set!</Text>
+          <Text className="py-4 font-semibold text-[40px] text-secondary w-full text-center">We're all set!</Text>
           <Text style={styles.subtitle}>Start learning now.</Text>
 
           <TouchableOpacity
-            style={[styles.button, { marginBottom: 20 }]}
+            style={[styles.button, { marginTop: 30 }]}
             onPress={handleFinish}
             activeOpacity={1}
           >
