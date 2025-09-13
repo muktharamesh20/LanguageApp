@@ -26,16 +26,18 @@ export default function OnboardingScreen() {
   const [name, setName] = useState("");
   const [language, setLanguage] = useState("");
   const [level, setLevel] = useState("");
+  const [learningReason, setLearningReason] = useState("")
 
   const handleFinish = async () => {
     try {
-      if (!name || !language || !level) {
+      if (!name || !language || !level || !learningReason) {
         alert("Please complete all fields.");
         return;
       }
       await AsyncStorage.setItem('@user_name', name);
       await AsyncStorage.setItem('@user_language', language);
       await AsyncStorage.setItem('@user_level', level);
+      await AsyncStorage.setItem('@learning_reason', learningReason);
       router.push('/chat'); // navigate to main app
     } catch (e) {
       console.error("Failed to save user data:", e);
@@ -108,7 +110,7 @@ export default function OnboardingScreen() {
             <TouchableOpacity
               key={lvl}
               style={[level === lvl ? styles.choiceActive : styles.choice]}
-              onPress={() => {setLevel(lvl)}} 
+              onPress={() => {setLearningReason(lvl)}} 
             >
               <Text
                 style={[
@@ -127,25 +129,23 @@ export default function OnboardingScreen() {
     {
       key: "5",
       render: () => (
-        
-        <View style={styles.slide}>
-          <Text style={styles.title}>We're all set!</Text>
-          <Text style={styles.subtitle}>Let us know your name.</Text>
-
-          <Image
-          source={images.butterfly}
-          style={{ width: '80%', height: 300, resizeMode: 'contain' }}
-          />
-
-
-          <TouchableOpacity
-            style={[styles.button, { marginBottom: 20 }]}
-            onPress={handleFinish}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.buttonText}>Start Learning</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={{ flex: 1, alignItems: "center", marginTop: insets.top + 130 }}>
+    <Image
+      source={images.butterfly}
+      style={{ width: '80%', height: 300, resizeMode: 'contain' }}
+    />
+    <View style={styles.slide}>
+      <Text style={styles.title}>We're all set!</Text>
+      <Text style={styles.subtitle}>Start learning now.</Text>
+      <TouchableOpacity
+        style={[styles.button, { marginBottom: 20 }]}
+        onPress={handleFinish}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.buttonText}>Let's go!</Text>
+      </TouchableOpacity>
+    </View>
+    </View>
       ),
     }
   ];

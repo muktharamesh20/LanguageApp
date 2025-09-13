@@ -32,20 +32,23 @@ export default function Chat() {
   const [name, setName] = useState('');
   const [language, setLanguage] = useState('');
   const [level, setLevel] = useState('');
+  const [learningReason, setLearningReason] = useState('');
 
   useEffect(() => {
     const loadUserData = async () => {
       const storedName = await AsyncStorage.getItem('@user_name');
       const storedLanguage = await AsyncStorage.getItem('@user_language');
       const storedLevel = await AsyncStorage.getItem('@user_level');
-      if (storedName && storedLanguage && storedLevel) {
+      const storedLearningReason = await AsyncStorage.getItem('@learning_reason');
+      if (storedName && storedLanguage && storedLevel && storedLearningReason) {
         setName(storedName);
         setLanguage(storedLanguage);
         setLevel(storedLevel);
+        setLearningReason(storedLearningReason || '');
       }else {
         Alert.alert("User data missing", "Please complete the onboarding process.");
       }
-      console.log(storedName, storedLanguage, storedLevel);
+      console.log(storedName, storedLanguage, storedLevel, storedLearningReason);
     };
     loadUserData();
   }, []);
