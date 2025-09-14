@@ -237,12 +237,14 @@ export default function FlashcardsPage() {
             onChangeText={setWordInput}
             placeholder="Word or phrase"
             style={styles.input}
+            placeholderTextColor={"#999"}
           />
           <TextInput
             value={translationInput}
             onChangeText={setTranslationInput}
             placeholder="Translation"
             style={styles.input}
+            placeholderTextColor={"#999"}
           />
           <View style={styles.modalActions}>
             <TouchableOpacity

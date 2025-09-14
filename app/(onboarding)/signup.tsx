@@ -5,12 +5,12 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as WebBrowser from "expo-web-browser";
 import {
-  Image,
-  Text,
-  TextInput,
-  TextStyle,
-  TouchableOpacity,
-  View,
+    Image,
+    Text,
+    TextInput,
+    TextStyle,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -146,7 +146,7 @@ const signup = () => {
           AsyncStorage.setItem("@refresh_token", refresh_token);
           AsyncStorage.setItem("@userId", data!.session!.user.id ?? "");
 
-          router.navigate("/(tabs)/home");
+          router.navigate("/(onboardingSlides)/onboard");
         } else {
           Alert.alert("Could not extract tokens from redirect URL");
         }
