@@ -3,13 +3,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    FlatList,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -105,24 +105,29 @@ const Home = () => {
           setRecentChats(chatSessions);
         }
 
-        // Load flashcard collections
+        // Load flashcard collections with word counts
         const { data: collectionData, error: collectionError } = await supabase
-          .from("collections")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("last_practiced", { ascending: false });
+        .from("collections")
+        .select(`
+        id,
+        name,
+        last_practiced,
+        collections_to_words (id)
+        `)
+        .eq("user_id", user.id)
+        .order("last_practiced", { ascending: false });
 
         if (!collectionError && collectionData) {
-          const collections: FlashcardCollection[] = collectionData.map(
-            (collection) => ({
-              id: collection.id,
-              name: collection.name,
-              lastPracticed: collection.last_practiced,
-              wordCount: 0, // We'll update this later if needed
-            })
-          );
-          setFlashcardCollections(collections);
-        }
+        const collections: FlashcardCollection[] = collectionData.map((collection) => ({
+        id: collection.id,
+        name: collection.name,
+        lastPracticed: collection.last_practiced,
+        wordCount: collection.collections_to_words?.length ?? 0,
+        }));
+
+        setFlashcardCollections(collections);
+}
+
       } catch (err: any) {
         console.error(err);
         Alert.alert("Error", err.message || "Something went wrong.");
@@ -160,7 +165,7 @@ const Home = () => {
   );
 
   const renderCollectionItem = ({ item }: { item: FlashcardCollection }) => (
-    <TouchableOpacity style={styles.collectionItem}>
+    <TouchableOpacity onPress={() => router.navigate(`/flashcards/${item.id}`)} style={styles.collectionItem}>
       <Text style={styles.collectionTitle}>{item.name}</Text>
       <Text style={styles.collectionInfo}>{item.wordCount} words</Text>
       <Text style={styles.collectionDate}>
@@ -189,9 +194,9 @@ const Home = () => {
         <View style={styles.createButtons}>
           <TouchableOpacity
             style={styles.createButton}
-            onPress={() => router.push("/create-chat")}
+            onPress={() => {console.log("New Chat"); router.push("/(tabs)/chat")}}
           >
-            <Text style={styles.createButtonText}>🗣️ New Chat</Text>
+            <Text style={styles.createButtonText}>🗣️ Language Coach</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.createButton}
@@ -274,6 +279,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
     borderRadius: 12,
     padding: 20,
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    borderWidth: 1,
   },
   createButtons: {
     flexDirection: "row",
