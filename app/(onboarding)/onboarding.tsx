@@ -72,17 +72,18 @@ const Onboarding = () => {
           position: "absolute",
           left: 0,
           right: 0,
-          bottom: insets.bottom + 30,
+          bottom: insets.bottom,
           alignItems: "center",
           zIndex: 20,
         }}
       >
-        <Link href={"/(onboardingSlides)/onboard"} asChild>
+        <Link href={"/(onboarding)/login"} asChild>
           <TouchableOpacity
             style={{
               backgroundColor: "#000000",
               marginHorizontal: 32,
               paddingVertical: 16,
+              marginTop: 10,
               borderRadius: 12,
               alignItems: "center",
               width: "80%",
@@ -95,7 +96,32 @@ const Onboarding = () => {
                 fontWeight: "bold",
               }}
             >
-              Get Started
+              Log in
+            </Text>
+          </TouchableOpacity>
+        </Link>
+
+        <Link href={"/(onboardingSlides)/onboard"} asChild>
+          <TouchableOpacity
+            style={{
+              borderColor: "#fffff",
+              borderWidth: 1,
+              marginHorizontal: 32,
+              marginVertical: 10,
+              paddingVertical: 16,
+              borderRadius: 12,
+              alignItems: "center",
+              width: "80%",
+            }}
+          >
+            <Text
+              style={{
+                color: "#000000",
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
+              Sign Up
             </Text>
           </TouchableOpacity>
         </Link>
