@@ -1,3 +1,4 @@
+import { ChatService } from "@/app/services/chatService";
 import { images } from "@/constants/images";
 import { supabase } from "@/constants/supabaseClient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -28,7 +29,7 @@ export default function CreateChat() {
   const [level, setLevel] = useState("");
 
   const handleCreateChat = async () => {
-    if (!language.trim() || !level) {
+    if (!chatName.trim() || !language.trim() || !level) {
       Alert.alert("Please complete all fields");
       return;
     }
@@ -45,16 +46,14 @@ export default function CreateChat() {
         return;
       }
 
-      // Create a new chat session using timestamp
-      const sessionStartTime = new Date().toISOString();
-      const sessionId = `chat_${Date.now()}`;
+      // Create a new chat in the database
+      const chatId = await ChatService.createChat(chatName, user.id);
 
       // Store chat data in AsyncStorage for the chat component to use
       await AsyncStorage.setItem("@chat_name", chatName);
       await AsyncStorage.setItem("@chat_language", language);
       await AsyncStorage.setItem("@chat_level", level);
-      await AsyncStorage.setItem("@chat_session_id", sessionId);
-      await AsyncStorage.setItem("@chat_session_start_time", sessionStartTime);
+      await AsyncStorage.setItem("@chat_id", chatId);
       // Add a flag to indicate this is a new blank chat
       await AsyncStorage.setItem("@is_new_chat", "true");
 

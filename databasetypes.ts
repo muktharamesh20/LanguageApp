@@ -41,6 +41,7 @@ export type Database = {
     Tables: {
       chat_histories: {
         Row: {
+          chat_associated: string;
           created_at: string;
           id: string;
           text: string;
@@ -48,6 +49,7 @@ export type Database = {
           user_spoke: boolean;
         };
         Insert: {
+          chat_associated: string;
           created_at?: string;
           id?: string;
           text: string;
@@ -55,6 +57,7 @@ export type Database = {
           user_spoke: boolean;
         };
         Update: {
+          chat_associated?: string;
           created_at?: string;
           id?: string;
           text?: string;
@@ -64,6 +67,42 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "chat_histories_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "usersettings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chat_histories_chat_associated_fkey";
+            columns: ["chat_associated"];
+            isOneToOne: false;
+            referencedRelation: "chats";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      chats: {
+        Row: {
+          chat_name: string;
+          created_at: string;
+          id: string;
+          user_id: string;
+        };
+        Insert: {
+          chat_name: string;
+          created_at?: string;
+          id?: string;
+          user_id: string;
+        };
+        Update: {
+          chat_name?: string;
+          created_at?: string;
+          id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chats_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "usersettings";

@@ -1,7 +1,9 @@
+import { ChatService } from "@/app/services/chatService";
 import MarkdownText from "@/components/MarkdownText";
 import { supabase } from "@/constants/supabaseClient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useRef, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -39,89 +41,146 @@ export default function Chat() {
   const [language, setLanguage] = useState("");
   const [level, setLevel] = useState("");
   const [chatName, setChatName] = useState("");
-  const [chatSessionId, setChatSessionId] = useState("");
-  const [chatSessionStartTime, setChatSessionStartTime] = useState("");
+  const [chatId, setChatId] = useState("");
   const [isNewChat, setIsNewChat] = useState(false);
 
   useEffect(() => {
     const initializeChat = async () => {
-      // Only load messages if we have a session start time and it's not a new chat
-      if (!chatSessionStartTime || isNewChat) return;
-
-      const welcomeMessages: Message[] = await supabase
-        .from("chat_histories")
-        .select("*")
-        .gte("created_at", chatSessionStartTime)
-        .order("created_at", { ascending: true })
-        .then((res) => {
-          if (res.error) {
-            console.error("Error fetching welcome messages:", res.error);
-            return [];
-          }
-          return res.data.map((item) => ({
-            id: item.id.toString(),
-            text: item.text,
-            isUser: item.user_spoke,
-            timestamp: new Date(item.created_at),
-          }));
-        });
-      setMessages(welcomeMessages);
-    };
-    initializeChat();
-  }, [chatSessionStartTime, isNewChat]);
-
-  useEffect(() => {
-    const loadUserData = async () => {
-      // Load user settings from database
-      const userId = (await supabase.auth.getUser()!).data!.user!.id;
-      const storedData = await supabase
-        .from("usersettings")
-        .select("*")
-        .eq("id", userId)
-        .single();
-      const storedName = storedData.data?.name;
-
-      // Load chat-specific data from AsyncStorage
-      const storedChatName = await AsyncStorage.getItem("@chat_name");
-      const storedChatLanguage = await AsyncStorage.getItem("@chat_language");
-      const storedChatLevel = await AsyncStorage.getItem("@chat_level");
-      const storedChatSessionId = await AsyncStorage.getItem(
-        "@chat_session_id"
-      );
-      const storedChatSessionStartTime = await AsyncStorage.getItem(
-        "@chat_session_start_time"
-      );
-      const storedIsNewChat = await AsyncStorage.getItem("@is_new_chat");
-
-      if (
-        storedName &&
-        storedChatName &&
-        storedChatLanguage &&
-        storedChatLevel &&
-        storedChatSessionId &&
-        storedChatSessionStartTime
-      ) {
-        setName(storedName);
-        setLanguage(storedChatLanguage);
-        setLevel(storedChatLevel);
-        setChatName(storedChatName);
-        setChatSessionId(storedChatSessionId);
-        setChatSessionStartTime(storedChatSessionStartTime);
-        setIsNewChat(storedIsNewChat === "true");
-      } else {
-        Alert.alert("Chat data missing", "Please create a new chat first.");
-      }
       console.log(
-        storedName,
-        storedChatLanguage,
-        storedChatLevel,
-        storedChatName,
-        storedChatSessionId,
-        storedChatSessionStartTime
+        "initializeChat called with chatId:",
+        chatId,
+        "isNewChat:",
+        isNewChat
       );
+
+      // Only load messages if we have a chat ID and it's not a new chat
+      if (!chatId || isNewChat) {
+        console.log(
+          "Skipping chat initialization - chatId:",
+          chatId,
+          "isNewChat:",
+          isNewChat
+        );
+        return;
+      }
+
+      try {
+        console.log("Loading messages for chat ID:", chatId);
+        const chatWithMessages = await ChatService.getChatWithMessages(
+          chatId,
+          (
+            await supabase.auth.getUser()
+          ).data.user!.id
+        );
+
+        if (chatWithMessages) {
+          console.log(
+            "Found chat with",
+            chatWithMessages.messages.length,
+            "messages"
+          );
+          const welcomeMessages: Message[] = chatWithMessages.messages.map(
+            (item) => ({
+              id: item.id.toString(),
+              text: item.text,
+              isUser: item.user_spoke,
+              timestamp: new Date(item.created_at),
+            })
+          );
+          setMessages(welcomeMessages);
+        } else {
+          console.log("No chat found for ID:", chatId);
+          setMessages([]);
+        }
+      } catch (error) {
+        console.error("Error fetching chat messages:", error);
+        setMessages([]);
+      }
     };
-    loadUserData();
-  }, []);
+
+    // Clear messages first when chatId changes to prevent showing old messages
+    if (chatId) {
+      console.log("Clearing messages for new chatId:", chatId);
+      setMessages([]);
+    }
+
+    // Only initialize chat if we have all required data loaded
+    if (chatId && !isNewChat) {
+      console.log("Calling initializeChat for existing chat:", chatId);
+      initializeChat();
+    } else {
+      console.log(
+        "Not calling initializeChat - chatId:",
+        chatId,
+        "isNewChat:",
+        isNewChat
+      );
+    }
+  }, [chatId, isNewChat]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadUserData = async () => {
+        try {
+          // Load user settings from database
+          const userId = (await supabase.auth.getUser()!).data!.user!.id;
+          const storedData = await supabase
+            .from("usersettings")
+            .select("*")
+            .eq("id", userId)
+            .single();
+          const storedName = storedData.data?.name;
+
+          // Load chat-specific data from AsyncStorage
+          const storedChatName = await AsyncStorage.getItem("@chat_name");
+          const storedChatLanguage = await AsyncStorage.getItem(
+            "@chat_language"
+          );
+          const storedChatLevel = await AsyncStorage.getItem("@chat_level");
+          const storedChatId = await AsyncStorage.getItem("@chat_id");
+          const storedIsNewChat = await AsyncStorage.getItem("@is_new_chat");
+
+          console.log("Loaded from AsyncStorage:", {
+            storedChatId,
+            storedChatLanguage,
+            storedChatLevel,
+            storedChatName,
+            storedIsNewChat,
+            storedName,
+          });
+
+          if (
+            storedName &&
+            storedChatName &&
+            storedChatLanguage &&
+            storedChatLevel &&
+            storedChatId
+          ) {
+            console.log(
+              "Setting chat data - chatId:",
+              storedChatId,
+              "isNewChat:",
+              storedIsNewChat
+            );
+            setName(storedName);
+            setLanguage(storedChatLanguage);
+            setLevel(storedChatLevel);
+            setChatName(storedChatName);
+            setChatId(storedChatId);
+            // Handle both new chats (true) and existing chats (null/undefined)
+            setIsNewChat(storedIsNewChat === "true");
+          } else {
+            console.log("Missing chat data - showing alert");
+            Alert.alert("Chat data missing", "Please create a new chat first.");
+          }
+        } catch (error) {
+          console.error("Error loading user data:", error);
+          Alert.alert("Error", "Failed to load chat data.");
+        }
+      };
+      loadUserData();
+    }, [])
+  );
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
@@ -152,63 +211,49 @@ export default function Chat() {
         chatName,
       };
 
-      // Convert existing messages to conversation history format
-      // Only keep the last user message + last model response + current user message
-      const conversationHistory: ConversationMessage[] = [];
+      // Store user message in database
+      await ChatService.addMessage(
+        chatId,
+        userMessage.text,
+        true,
+        (
+          await supabase.auth.getUser()
+        ).data.user!.id
+      );
 
-      // Find the last user message and last assistant message from existing messages
-      let lastUserMessage: Message | null = null;
-      let lastAssistantMessage: Message | null = null;
+      // Get conversation history from database
+      const chatWithMessages = await ChatService.getChatWithMessages(
+        chatId,
+        (
+          await supabase.auth.getUser()
+        ).data.user!.id
+      );
+      const conversationHistory: ConversationMessage[] =
+        chatWithMessages?.messages.map((item) => ({
+          role: item.user_spoke ? ("user" as const) : ("assistant" as const),
+          content: item.text,
+        })) || [];
 
-      // Iterate through messages in reverse to find the most recent ones
-      for (let i = messages.length - 1; i >= 0; i--) {
-        const msg = messages[i];
-        if (msg.isUser && !lastUserMessage) {
-          lastUserMessage = msg;
-        } else if (!msg.isUser && !lastAssistantMessage) {
-          lastAssistantMessage = msg;
-        }
-
-        // Stop if we found both
-        if (lastUserMessage && lastAssistantMessage) break;
-      }
-
-      // Add the last assistant message if it exists
-      if (lastAssistantMessage) {
-        conversationHistory.push({
-          role: "assistant",
-          content: lastAssistantMessage.text,
-        });
-      }
-
-      // Add the last user message if it exists
-      if (lastUserMessage) {
-        conversationHistory.push({
-          role: "user",
-          content: lastUserMessage.text,
-        });
-      }
-
-      const supabaseConversationHistory = (
-        await supabase
-          .from("chat_histories")
-          .select("*")
-          .gte("created_at", chatSessionStartTime)
-      ).data;
       const response = await sendToAnthropic(
         userMessage.text,
         userContext,
-        //conversationHistory
-        supabaseConversationHistory?.map((item) => ({
-          role: item.user_spoke ? "user" : "assistant",
-          content: item.text,
-        }))
+        conversationHistory
       );
 
       if (response.error) {
         Alert.alert("Error", response.error);
         return;
       }
+
+      // Store bot response in database
+      await ChatService.addMessage(
+        chatId,
+        response.content,
+        false,
+        (
+          await supabase.auth.getUser()
+        ).data.user!.id
+      );
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),

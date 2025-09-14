@@ -1,3 +1,4 @@
+import { ChatService } from "@/app/services/chatService";
 import { supabase } from "@/constants/supabaseClient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -61,48 +62,35 @@ const Home = () => {
 
         setName(userData.name);
 
-        // Load recent chats by grouping messages by time ranges
-        const { data: chatData, error: chatError } = await supabase
-          .from("chat_histories")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(50);
+        // Load recent chats using ChatService
+        try {
+          const userChats = await ChatService.getUserChats(user.id);
 
-        if (!chatError && chatData) {
-          // Group messages by time ranges to create chat sessions
+          // Get the last message for each chat to display as preview
           const chatSessions: ChatSession[] = [];
-          const messageGroups: { [key: string]: any[] } = {};
 
-          chatData.forEach((message) => {
-            const messageTime = new Date(message.created_at);
-            const date = messageTime.toDateString();
-
-            if (!messageGroups[date]) {
-              messageGroups[date] = [];
-            }
-            messageGroups[date].push(message);
-          });
-
-          Object.entries(messageGroups).forEach(([date, messages]) => {
-            const sortedMessages = messages.sort(
-              (a, b) =>
-                new Date(a.created_at).getTime() -
-                new Date(b.created_at).getTime()
+          for (const chat of userChats) {
+            const chatWithMessages = await ChatService.getChatWithMessages(
+              chat.id,
+              user.id
             );
-            const lastMessage = sortedMessages[sortedMessages.length - 1];
+            const lastMessage =
+              chatWithMessages?.messages[chatWithMessages.messages.length - 1];
 
             chatSessions.push({
-              id: `chat_${date}`,
-              title: `Chat - ${date}`,
-              lastMessage:
-                lastMessage.text.substring(0, 50) +
-                (lastMessage.text.length > 50 ? "..." : ""),
-              createdAt: lastMessage.created_at,
+              id: chat.id,
+              title: chat.chat_name,
+              lastMessage: lastMessage
+                ? lastMessage.text.substring(0, 50) +
+                  (lastMessage.text.length > 50 ? "..." : "")
+                : "No messages yet",
+              createdAt: chat.created_at,
             });
-          });
+          }
 
           setRecentChats(chatSessions);
+        } catch (error) {
+          console.error("Error loading recent chats:", error);
         }
 
         // Load flashcard collections
@@ -135,22 +123,48 @@ const Home = () => {
     <TouchableOpacity
       style={styles.chatItem}
       onPress={async () => {
-        // Extract date from the chat ID and create a timestamp range
-        const dateStr = item.id.replace("chat_", "");
-        const startOfDay = new Date(dateStr).toISOString();
-        const endOfDay = new Date(dateStr);
-        endOfDay.setHours(23, 59, 59, 999);
-        const endOfDayStr = endOfDay.toISOString();
+        try {
+          // Get the chat details to load language and level
+          const chatWithMessages = await ChatService.getChatWithMessages(
+            item.id,
+            (
+              await supabase.auth.getUser()
+            ).data.user!.id
+          );
 
-        // Store session data in AsyncStorage
-        await AsyncStorage.setItem("@chat_session_id", item.id);
-        await AsyncStorage.setItem("@chat_name", item.title);
-        await AsyncStorage.setItem("@chat_session_start_time", startOfDay);
-        // Clear new chat flag for existing chats
-        await AsyncStorage.removeItem("@is_new_chat");
+          if (chatWithMessages) {
+            // For existing chats, we need to get the language and level from somewhere
+            // Since they're not stored in the chat table, we'll use defaults or ask user
+            // For now, let's use the user's default settings
+            const userSettings = await supabase
+              .from("usersettings")
+              .select("*")
+              .eq("id", (await supabase.auth.getUser()).data.user!.id)
+              .single();
 
-        // Navigate to chat
-        router.push("/(tabs)/chat");
+            // Store session data in AsyncStorage
+            console.log("Storing chat data for chat ID:", item.id);
+            await AsyncStorage.setItem("@chat_id", item.id);
+            await AsyncStorage.setItem("@chat_name", item.title);
+            await AsyncStorage.setItem(
+              "@chat_language",
+              userSettings.data?.language || "English"
+            );
+            await AsyncStorage.setItem(
+              "@chat_level",
+              userSettings.data?.level || "Beginner"
+            );
+            // Clear new chat flag for existing chats
+            await AsyncStorage.removeItem("@is_new_chat");
+            console.log("Stored chat data and removed is_new_chat flag");
+
+            // Navigate to chat
+            router.push("/(tabs)/chat");
+          }
+        } catch (error) {
+          console.error("Error loading chat:", error);
+          Alert.alert("Error", "Failed to load chat. Please try again.");
+        }
       }}
     >
       <Text style={styles.chatTitle}>{item.title}</Text>
