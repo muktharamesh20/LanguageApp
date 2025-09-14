@@ -265,7 +265,7 @@ export default function Chat() {
         }}
       >
         <Text style={{ color: "#FFF", fontSize: 20, fontWeight: "bold" }}>
-          Language App Chat
+          Kikai Chat
         </Text>
       </View>
 
