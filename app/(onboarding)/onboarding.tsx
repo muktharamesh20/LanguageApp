@@ -5,12 +5,12 @@ import { Link, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TextStyle,
-    TouchableOpacity,
-    View,
+  Image,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -63,7 +63,7 @@ const Onboarding = () => {
           Hi there!
         </Text>
         <Text className="py-2 font-small text-[15px] text-secondary w-80 text-center">
-          Language App is here to assist you with your language needs.
+          Kikai is here to assist you with your language needs.
         </Text>
       </View>
 

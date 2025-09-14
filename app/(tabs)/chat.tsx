@@ -32,19 +32,23 @@ export default function Chat() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const initializeChat = async() => {
-      const welcomeMessages: Message[] = await supabase.from('chat_histories').select('*').order('created_at', {ascending: true}).then(res => {
-        if(res.error) {
-          console.error("Error fetching welcome messages:", res.error);
-          return [];
-        }
-        return res.data.map(item => ({
-          id: item.id.toString(),
-          text: item.text,
-          isUser: item.user_spoke,
-          timestamp: new Date(item.created_at),
-        }));
-      });
+    const initializeChat = async () => {
+      const welcomeMessages: Message[] = await supabase
+        .from("chat_histories")
+        .select("*")
+        .order("created_at", { ascending: true })
+        .then((res) => {
+          if (res.error) {
+            console.error("Error fetching welcome messages:", res.error);
+            return [];
+          }
+          return res.data.map((item) => ({
+            id: item.id.toString(),
+            text: item.text,
+            isUser: item.user_spoke,
+            timestamp: new Date(item.created_at),
+          }));
+        });
       setMessages(welcomeMessages);
     };
     initializeChat();
@@ -149,12 +153,17 @@ export default function Chat() {
         });
       }
 
-      const supabaseConversationHistory = (await supabase.from('chat_histories').select('*')).data;
+      const supabaseConversationHistory = (
+        await supabase.from("chat_histories").select("*")
+      ).data;
       const response = await sendToAnthropic(
         userMessage.text,
         userContext,
         //conversationHistory
-        supabaseConversationHistory?.map((item) => ({role: item.user_spoke ? "user" : "assistant", content: item.text}))
+        supabaseConversationHistory?.map((item) => ({
+          role: item.user_spoke ? "user" : "assistant",
+          content: item.text,
+        }))
       );
 
       if (response.error) {
@@ -192,7 +201,7 @@ export default function Chat() {
     >
       <View
         style={{
-          backgroundColor: message.isUser ? "#0D3B66" : "#E5E5E5",
+          backgroundColor: message.isUser ? "#000000" : "#E5E5E5",
           paddingVertical: 12,
           paddingHorizontal: 16,
           borderRadius: 20,
@@ -256,7 +265,7 @@ export default function Chat() {
         }}
       >
         <Text style={{ color: "#FFF", fontSize: 20, fontWeight: "bold" }}>
-          Language App Chat
+          Kikai Chat
         </Text>
       </View>
 
@@ -307,7 +316,7 @@ export default function Chat() {
         style={{
           paddingHorizontal: 16,
           paddingTop: 8,
-          paddingBottom:  12,
+          paddingBottom: 12,
           borderTopWidth: 1,
           borderTopColor: "#E5E5E5",
           backgroundColor: "#FFF",
@@ -326,6 +335,7 @@ export default function Chat() {
               minHeight: 48,
             }}
             placeholder="Type a message..."
+            placeholderTextColor="#CCC"
             value={inputText}
             onChangeText={setInputText}
             multiline
@@ -338,7 +348,7 @@ export default function Chat() {
               height: 48,
               borderRadius: 24,
               backgroundColor:
-                inputText.trim() && !isLoading ? "#0D3B66" : "#CCC",
+                inputText.trim() && !isLoading ? "#000000" : "#CCC",
               justifyContent: "center",
               alignItems: "center",
             }}
