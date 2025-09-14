@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   Text,
   TextInput,
@@ -29,7 +30,6 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
@@ -43,7 +43,11 @@ export default function Chat() {
     const loadUserData = async () => {
       //const storedName = await AsyncStorage.getItem("@user_name");
       const userId = (await supabase.auth.getUser()!).data!.user!.id;
-      const storedData = await supabase.from("usersettings").select("*").eq("id", userId).single();
+      const storedData = await supabase
+        .from("usersettings")
+        .select("*")
+        .eq("id", userId)
+        .single();
       const storedName = storedData.data?.name;
       const storedLanguage = storedData.data?.language;
       //const storedLevel = await AsyncStorage.getItem("@user_level");
@@ -64,26 +68,6 @@ export default function Chat() {
       console.log(storedName, storedLanguage, storedLevel, storedPurpose);
     };
     loadUserData();
-  }, []);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      (e) => {
-        setKeyboardHeight(e.endCoordinates.height);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardHeight(0);
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener?.remove();
-      keyboardDidHideListener?.remove();
-    };
   }, []);
 
   const sendMessage = async () => {
@@ -231,7 +215,11 @@ export default function Chat() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFF" }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: "#FFF" }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+    >
       {/* Header */}
       <View
         style={{
@@ -256,7 +244,7 @@ export default function Chat() {
         ref={scrollViewRef}
         style={{ flex: 1, paddingHorizontal: 16, paddingTop: 12 }}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + 80 + keyboardHeight,
+          paddingBottom: 20,
         }}
       >
         {messages.length === 0 && !isLoading && (
@@ -293,25 +281,9 @@ export default function Chat() {
         )}
       </ScrollView>
 
-      {/* Background for bottom area */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: keyboardHeight + insets.bottom + 80,
-          backgroundColor: "#FFF",
-        }}
-      />
-
       {/* Input Area */}
       <View
         style={{
-          position: "absolute",
-          bottom: keyboardHeight + insets.bottom + 12,
-          left: 0,
-          right: 0,
           paddingHorizontal: 16,
           paddingTop: 8,
           paddingBottom: 12,
@@ -358,6 +330,6 @@ export default function Chat() {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
