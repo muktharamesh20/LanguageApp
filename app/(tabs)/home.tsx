@@ -1,12 +1,46 @@
-import React from 'react';
+import { supabase } from '@/constants/supabaseClient';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Home = () => {
     const insets = useSafeAreaInsets();
+        const [name, setName] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadUserName = async () => {
+            try {
+                const {
+                    data: { user },
+                    error: authError,
+                } = await supabase.auth.getUser();
+
+                if (authError || !user) {
+                    throw new Error("User not authenticated");
+                }
+
+                const { data, error } = await supabase
+                    .from('usersettings')
+                    .select('name')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error || !data?.name) {
+                    throw new Error("Could not fetch user name.");
+                }
+
+                setName(data.name);
+            } catch (err: any) {
+                console.error(err);
+                Alert.alert("Error", err.message || "Something went wrong.");
+            }
+        };
+
+        loadUserName();
+    }, []);
     return (
         <ScrollView contentContainerStyle={{...styles.container, paddingTop: insets.top + 15, paddingBottom: insets.bottom + 20}}>
-            <Text style={styles.title}>Welcome to Your Language Learning App! 👋</Text>
+            <Text style={styles.title}> {name ? `Welcome back, ${name}! 👋` : "Welcome to Your Language Learning App! 👋"}</Text>
             
             <View style={styles.section}>
                 <Text style={styles.heading}>📚 Daily Practice</Text>
