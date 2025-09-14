@@ -35,12 +35,17 @@ export default function OnboardingScreen() {
         alert("Please complete all fields.");
         return;
       }
-      await AsyncStorage.setItem("@user_name", name);
-      await AsyncStorage.setItem("@user_language", language);
-      await AsyncStorage.setItem("@user_level", level);
-      await AsyncStorage.setItem("@user_purpose", purpose);
+      const id = await AsyncStorage.getItem("@userId");
+      if (!id) {
+        throw new Error("User ID not found");
+      }
 
-      supabase.from("usersettings").upsert({name, language, level, purpose}).eq("id", (await AsyncStorage.getItem("@user_id")) || "");
+      const {data, error} = await supabase.from("usersettings").upsert({name, language, level, reason: purpose, id}).eq("id", id);
+      if (error) {
+        console.error("Supabase upsert error:", error);
+        alert("Failed to save user data. Please try again.");
+        return;
+      }
       router.push("/(tabs)/home"); // navigate to main app
     } catch (e) {
       console.error("Failed to save user data:", e);

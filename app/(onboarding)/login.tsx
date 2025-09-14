@@ -274,7 +274,7 @@ const login = () => {
           <Text style={{
             fontWeight: 'bold',
             fontSize: 18,
-            color: '#14354E',
+            color: '#000000',
           }}>
             Sign in with Google
           </Text>

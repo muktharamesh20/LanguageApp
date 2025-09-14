@@ -111,7 +111,7 @@ const signup = () => {
           AsyncStorage.setItem('@access_token', access_token);
           AsyncStorage.setItem('@refresh_token', refresh_token);
           AsyncStorage.setItem('@userId', data!.session!.user.id ?? '');
-          router.navigate('./onboardingSlides/onboard');
+          router.navigate('/(onboardingSlides)/onboard');
         } else {
           Alert.alert('Could not extract tokens from redirect URL');
         }
@@ -123,7 +123,7 @@ const signup = () => {
 
   return (
     <LinearGradient
-      colors={['#3897F2', '#14354E']}
+      colors={['#ffffff', '#ffffff']}
       style={{ flex: 1, alignItems: 'center' }}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
@@ -152,7 +152,7 @@ const signup = () => {
           style={{ width: '60%', height: 100, resizeMode: 'contain' }}
         />
 
-        <Text className="py-4 font-bold text-[20px] text-primary w-full text-start ml-[20%]">
+        <Text className="py-4 font-bold text-[20px] text-black w-full text-start ml-[20%]">
           Sign Up
         </Text>
 
@@ -162,7 +162,7 @@ const signup = () => {
           placeholderTextColor="#F9F8F5"
           style={{
             width: '80%',
-            backgroundColor: '#1A466B',
+            backgroundColor: 'black',
             borderRadius: 12,
             paddingVertical: 12,
             paddingHorizontal: 16,
@@ -184,7 +184,7 @@ const signup = () => {
           placeholderTextColor="#F9F8F5"
           style={{
             width: '80%',
-            backgroundColor: '#1A466B',
+            backgroundColor: 'black',
             borderRadius: 12,
             paddingVertical: 12,
             paddingHorizontal: 16,
@@ -207,7 +207,9 @@ const signup = () => {
         >
           <Text style={{
             paddingVertical: 12,
-            backgroundColor: '#F9F8F5',
+            //backgroundColor: '#F9F8F5',
+            borderColor: 'black',
+            borderWidth: 1,
             borderRadius: 16,
             fontWeight: 'bold',
             fontSize: 20,
@@ -253,12 +255,12 @@ const signup = () => {
             width: '80%',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#fff',
+            backgroundColor: '#ffffff',
             borderRadius: 16,
             paddingVertical: 12,
             flexDirection: 'row',
             borderWidth: 1,
-            borderColor: '#E4E4E4',
+            borderColor: '#000000',
           }}
           onPress={signInWithGoogle}
         >
@@ -266,7 +268,7 @@ const signup = () => {
           <Text style={{
             fontWeight: 'bold',
             fontSize: 18,
-            color: '#14354E',
+            color: '#000000',
           }}>
             Sign in with Google
           </Text>

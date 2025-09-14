@@ -1,9 +1,11 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Home = () => {
+    const insets = useSafeAreaInsets();
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={{...styles.container, paddingTop: insets.top + 15, paddingBottom: insets.bottom + 20}}>
             <Text style={styles.title}>Welcome to Your Language Learning App! 👋</Text>
             
             <View style={styles.section}>
@@ -32,8 +34,8 @@ const Home = () => {
 const styles = StyleSheet.create({
     container: {
         padding: 20,
-        paddingTop: 60,
-        backgroundColor: '#fff',
+        //paddingTop: 60,
+        //backgroundColor: '#fff',
         minHeight: '100%',
     },
     title: {

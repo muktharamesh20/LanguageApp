@@ -1,4 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import MarkdownText from "@/components/MarkdownText";
+import { supabase } from "@/constants/supabaseClient";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -11,12 +12,11 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import MarkdownText from "../components/MarkdownText";
 import {
   ConversationMessage,
   sendToAnthropic,
   UserContext,
-} from "./services/anthropic";
+} from "../services/anthropic";
 
 interface Message {
   id: string;
@@ -41,10 +41,15 @@ export default function Chat() {
 
   useEffect(() => {
     const loadUserData = async () => {
-      const storedName = await AsyncStorage.getItem("@user_name");
-      const storedLanguage = await AsyncStorage.getItem("@user_language");
-      const storedLevel = await AsyncStorage.getItem("@user_level");
-      const storedPurpose = await AsyncStorage.getItem("@user_purpose");
+      //const storedName = await AsyncStorage.getItem("@user_name");
+      const userId = (await supabase.auth.getUser()!).data!.user!.id;
+      const storedData = await supabase.from("usersettings").select("*").eq("id", userId).single();
+      const storedName = storedData.data?.name;
+      const storedLanguage = storedData.data?.language;
+      //const storedLevel = await AsyncStorage.getItem("@user_level");
+      //const storedPurpose = await AsyncStorage.getItem("@user_purpose");
+      const storedLevel = storedData.data?.level;
+      const storedPurpose = storedData.data?.reason;
       if (storedName && storedLanguage && storedLevel && storedPurpose) {
         setName(storedName);
         setLanguage(storedLanguage);
