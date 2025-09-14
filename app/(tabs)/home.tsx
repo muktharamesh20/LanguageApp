@@ -40,7 +40,7 @@ const Home = () => {
     }, []);
     return (
         <ScrollView contentContainerStyle={{...styles.container, paddingTop: insets.top + 15, paddingBottom: insets.bottom + 20}}>
-            <Text style={styles.title}> {name ? `Welcome back, ${name}! 👋` : "Welcome to Your Language Learning App! 👋"}</Text>
+            <Text style={styles.title}> {name ? `Welcome back, ${name}!` : "Welcome to Your Language Learning App!"}</Text>
             
             <View style={styles.section}>
                 <Text style={styles.heading}>📚 Daily Practice</Text>
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
+        marginTop: 20,
         marginBottom: 20,
     },
     section: {
