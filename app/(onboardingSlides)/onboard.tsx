@@ -38,7 +38,7 @@ export default function OnboardingScreen() {
       await AsyncStorage.setItem("@user_language", language);
       await AsyncStorage.setItem("@user_level", level);
       await AsyncStorage.setItem("@user_purpose", purpose);
-      router.push("./(tabs)/home"); // navigate to main app
+      router.push("/(tabs)/home"); // navigate to main app
     } catch (e) {
       console.error("Failed to save user data:", e);
     }
