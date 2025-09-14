@@ -1,4 +1,5 @@
 import { images } from "@/constants/images";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -86,7 +87,7 @@ export default function CreateFlashcards() {
             style={styles.backButton}
             onPress={() => router.back()}
           >
-            <Text style={styles.backButtonText}>← Back</Text>
+            <Ionicons name="arrow-back" size={24} color="#000000" />
           </TouchableOpacity>
           <Text style={styles.title}>Create New Flashcards</Text>
         </View>

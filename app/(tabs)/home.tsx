@@ -36,6 +36,9 @@ const Home = () => {
   const [flashcardCollections, setFlashcardCollections] = useState<
     FlashcardCollection[]
   >([]);
+  const [showAllChats, setShowAllChats] = useState(false);
+  const [showAllCollections, setShowAllCollections] = useState(false);
+
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -223,50 +226,56 @@ const Home = () => {
         </View>
       </View>
 
-      {/* Recent Chats Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Recent Chats</Text>
-        {recentChats.length > 0 ? (
-          <FlatList
-            data={recentChats.slice(0, 3)}
-            renderItem={renderChatItem}
-            keyExtractor={(item) => item.id}
-            scrollEnabled={false}
-          />
-        ) : (
-          <Text style={styles.emptyText}>
-            No chats yet. Start a new conversation!
-          </Text>
-        )}
-        {recentChats.length > 3 && (
-          <TouchableOpacity style={styles.viewAllButton}>
-            <Text style={styles.viewAllText}>View All Chats</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+    {/* Recent Chats Section */}
+<View style={styles.section}>
+  <Text style={styles.sectionTitle}>Recent Chats</Text>
+  {recentChats.length > 0 ? (
+    <FlatList
+      data={showAllChats ? recentChats : recentChats.slice(0, 3)}
+      renderItem={renderChatItem}
+      keyExtractor={(item) => item.id}
+      scrollEnabled={false}
+    />
+  ) : (
+    <Text style={styles.emptyText}>
+      No chats yet. Start a new conversation!
+    </Text>
+  )}
+  {recentChats.length > 3 && !showAllChats && (
+    <TouchableOpacity
+      style={styles.viewAllButton}
+      onPress={() => setShowAllChats(true)}
+    >
+      <Text style={styles.viewAllText}>View All Chats</Text>
+    </TouchableOpacity>
+  )}
+</View>
 
-      {/* Flashcard Collections Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Flashcard Collections</Text>
-        {flashcardCollections.length > 0 ? (
-          <FlatList
-            data={flashcardCollections.slice(0, 3)}
-            renderItem={renderCollectionItem}
-            keyExtractor={(item) => item.id}
-            scrollEnabled={false}
-          />
-        ) : (
-          <Text style={styles.emptyText}>
-            No flashcard collections yet. Create your first set!
-          </Text>
-        )}
-        {flashcardCollections.length > 3 && (
-          <TouchableOpacity style={styles.viewAllButton}>
-            <Text style={styles.viewAllText}>View All Collections</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </ScrollView>
+{/* Flashcard Collections Section */}
+<View style={styles.section}>
+  <Text style={styles.sectionTitle}>Flashcard Collections</Text>
+  {flashcardCollections.length > 0 ? (
+    <FlatList
+      data={showAllCollections ? flashcardCollections : flashcardCollections.slice(0, 3)}
+      renderItem={renderCollectionItem}
+      keyExtractor={(item) => item.id}
+      scrollEnabled={false}
+    />
+  ) : (
+    <Text style={styles.emptyText}>
+      No flashcard collections yet. Create your first set!
+    </Text>
+  )}
+  {flashcardCollections.length > 3 && !showAllCollections && (
+    <TouchableOpacity
+      style={styles.viewAllButton}
+      onPress={() => setShowAllCollections(true)}
+    >
+      <Text style={styles.viewAllText}>View All Collections</Text>
+    </TouchableOpacity>
+  )}
+</View>
+  </ScrollView>
   );
 };
 
