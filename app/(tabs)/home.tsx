@@ -215,7 +215,7 @@ const Home = () => {
             style={styles.createButton}
             onPress={() => {console.log("New Chat"); router.push("/(tabs)/chat")}}
           >
-            <Text style={styles.createButtonText}>🗣️ Language Coach</Text>
+            <Text style={styles.createButtonText}>✨ Language Coach</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.createButton}
