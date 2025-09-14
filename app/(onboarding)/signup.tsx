@@ -111,6 +111,7 @@ const signup = () => {
           AsyncStorage.setItem('@access_token', access_token);
           AsyncStorage.setItem('@refresh_token', refresh_token);
           AsyncStorage.setItem('@userId', data!.session!.user.id ?? '');
+
           router.navigate('/(onboardingSlides)/onboard');
         } else {
           Alert.alert('Could not extract tokens from redirect URL');

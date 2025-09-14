@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { generateStarterCollections } from "../services/anthropicCollections";
 
 const { width } = Dimensions.get("window");
 
@@ -46,6 +47,10 @@ export default function OnboardingScreen() {
         alert("Failed to save user data. Please try again.");
         return;
       }
+
+      const collections = await generateStarterCollections(id, '');
+
+
       router.push("/(tabs)/home"); // navigate to main app
     } catch (e) {
       console.error("Failed to save user data:", e);

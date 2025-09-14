@@ -81,6 +81,7 @@ export const sendToAnthropic = async (
     if (conversationHistory && conversationHistory.length > 0) {
       // Format the limited conversation history (last user message + last model response)
       const historyText = conversationHistory
+        .slice(-Math.min(conversationHistory.length, 10)) // last 10 messages
         .map(
           (msg) =>
             `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
