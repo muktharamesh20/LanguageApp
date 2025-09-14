@@ -77,7 +77,7 @@ const Home = () => {
           chatData.forEach((message) => {
             const messageTime = new Date(message.created_at);
             const date = messageTime.toDateString();
-            
+
             if (!messageGroups[date]) {
               messageGroups[date] = [];
             }
@@ -141,12 +141,14 @@ const Home = () => {
         const endOfDay = new Date(dateStr);
         endOfDay.setHours(23, 59, 59, 999);
         const endOfDayStr = endOfDay.toISOString();
-        
+
         // Store session data in AsyncStorage
         await AsyncStorage.setItem("@chat_session_id", item.id);
         await AsyncStorage.setItem("@chat_name", item.title);
         await AsyncStorage.setItem("@chat_session_start_time", startOfDay);
-        
+        // Clear new chat flag for existing chats
+        await AsyncStorage.removeItem("@is_new_chat");
+
         // Navigate to chat
         router.push("/(tabs)/chat");
       }}

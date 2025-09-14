@@ -1,5 +1,6 @@
 import MarkdownText from "@/components/MarkdownText";
 import { supabase } from "@/constants/supabaseClient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -31,11 +32,26 @@ export default function Chat() {
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const insets = useSafeAreaInsets();
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const [name, setName] = useState("");
+  const [language, setLanguage] = useState("");
+  const [level, setLevel] = useState("");
+  const [chatName, setChatName] = useState("");
+  const [chatSessionId, setChatSessionId] = useState("");
+  const [chatSessionStartTime, setChatSessionStartTime] = useState("");
+  const [isNewChat, setIsNewChat] = useState(false);
+
   useEffect(() => {
     const initializeChat = async () => {
+      // Only load messages if we have a session start time and it's not a new chat
+      if (!chatSessionStartTime || isNewChat) return;
+
       const welcomeMessages: Message[] = await supabase
         .from("chat_histories")
         .select("*")
+        .gte("created_at", chatSessionStartTime)
         .order("created_at", { ascending: true })
         .then((res) => {
           if (res.error) {
@@ -52,19 +68,11 @@ export default function Chat() {
       setMessages(welcomeMessages);
     };
     initializeChat();
-  }, []);
-
-  const insets = useSafeAreaInsets();
-  const scrollViewRef = useRef<ScrollView>(null);
-
-  const [name, setName] = useState("");
-  const [language, setLanguage] = useState("");
-  const [level, setLevel] = useState("");
-  const [purpose, setPurpose] = useState("");
+  }, [chatSessionStartTime, isNewChat]);
 
   useEffect(() => {
     const loadUserData = async () => {
-      //const storedName = await AsyncStorage.getItem("@user_name");
+      // Load user settings from database
       const userId = (await supabase.auth.getUser()!).data!.user!.id;
       const storedData = await supabase
         .from("usersettings")
@@ -72,23 +80,45 @@ export default function Chat() {
         .eq("id", userId)
         .single();
       const storedName = storedData.data?.name;
-      const storedLanguage = storedData.data?.language;
-      //const storedLevel = await AsyncStorage.getItem("@user_level");
-      //const storedPurpose = await AsyncStorage.getItem("@user_purpose");
-      const storedLevel = storedData.data?.level;
-      const storedPurpose = storedData.data?.reason;
-      if (storedName && storedLanguage && storedLevel && storedPurpose) {
+
+      // Load chat-specific data from AsyncStorage
+      const storedChatName = await AsyncStorage.getItem("@chat_name");
+      const storedChatLanguage = await AsyncStorage.getItem("@chat_language");
+      const storedChatLevel = await AsyncStorage.getItem("@chat_level");
+      const storedChatSessionId = await AsyncStorage.getItem(
+        "@chat_session_id"
+      );
+      const storedChatSessionStartTime = await AsyncStorage.getItem(
+        "@chat_session_start_time"
+      );
+      const storedIsNewChat = await AsyncStorage.getItem("@is_new_chat");
+
+      if (
+        storedName &&
+        storedChatName &&
+        storedChatLanguage &&
+        storedChatLevel &&
+        storedChatSessionId &&
+        storedChatSessionStartTime
+      ) {
         setName(storedName);
-        setLanguage(storedLanguage);
-        setLevel(storedLevel);
-        setPurpose(storedPurpose);
+        setLanguage(storedChatLanguage);
+        setLevel(storedChatLevel);
+        setChatName(storedChatName);
+        setChatSessionId(storedChatSessionId);
+        setChatSessionStartTime(storedChatSessionStartTime);
+        setIsNewChat(storedIsNewChat === "true");
       } else {
-        Alert.alert(
-          "User data missing",
-          "Please complete the onboarding process."
-        );
+        Alert.alert("Chat data missing", "Please create a new chat first.");
       }
-      console.log(storedName, storedLanguage, storedLevel, storedPurpose);
+      console.log(
+        storedName,
+        storedChatLanguage,
+        storedChatLevel,
+        storedChatName,
+        storedChatSessionId,
+        storedChatSessionStartTime
+      );
     };
     loadUserData();
   }, []);
@@ -107,13 +137,19 @@ export default function Chat() {
     setInputText("");
     setIsLoading(true);
 
+    // Clear the new chat flag after first message
+    if (isNewChat) {
+      await AsyncStorage.removeItem("@is_new_chat");
+      setIsNewChat(false);
+    }
+
     try {
       // Create user context for the system prompt
       const userContext: UserContext = {
         name,
         language,
         level,
-        purpose,
+        chatName,
       };
 
       // Convert existing messages to conversation history format
@@ -154,7 +190,10 @@ export default function Chat() {
       }
 
       const supabaseConversationHistory = (
-        await supabase.from("chat_histories").select("*")
+        await supabase
+          .from("chat_histories")
+          .select("*")
+          .gte("created_at", chatSessionStartTime)
       ).data;
       const response = await sendToAnthropic(
         userMessage.text,
