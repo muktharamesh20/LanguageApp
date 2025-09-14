@@ -1,50 +1,23 @@
-# Welcome to your Expo app 👋
+# Kikai 🎓🌍
+*Kikai is an AI-powered language learning app that adapts to you.*  
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Instead of following a rigid, one-size-fits-all curriculum, Kikai customizes learning paths based on your current level, goals, and preferred use cases (e.g., travel, professional, casual). Our mission is to make language learning more accessible—especially for learners of lower-resourced languages—by combining flashcards, conversation practice, and adaptive AI coaching into one seamless mobile experience.
 
-## Get started
+---
 
-1. Install dependencies
+## ✨ Features
+- 📚 **Adaptive Flashcards** – AI generates flashcards tailored to your learning goals.  
+- 💬 **AI Language Coach** – Practice speaking and writing with an AI tutor that remembers your past sessions.  
+- 🎯 **Personalized Learning Paths** – Whether you’re a tourist or a professional, learn vocabulary that matches your needs.  
+- 🗂 **Collections & Chats** – Organize learning into collections and maintain multiple conversation threads.  
+- 🚀 **Built in 24 hours** – Fully functional hackathon project designed for real-world use.  
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## 🛠 How We Built It
+- **Frontend:** [React Native](https://reactnative.dev/) with Expo  
+- **Backend & Database:** [Supabase](https://supabase.com/)  
+- **Automation & API Routing:** [n8n](https://n8n.io/)  
+- **AI Language Tutor:** [Anthropic Claude (Opus 4)](https://www.anthropic.com/)  
+- **Collaboration:** A diverse team with frontend, backend, and full-stack roles  
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

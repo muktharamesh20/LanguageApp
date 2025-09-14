@@ -26,9 +26,10 @@ export const generateStarterCollections = async (userId: string, message: string
     throw new Error(`n8n request failed: ${response.statusText}`);
   }
 
-  // Step 1: Get raw response object
+  console.warn("Received response from n8n", response.text);
+  // Step 1: Get raw response object 
   const data = await response.json();
-  console.log("raw response:", data);
+  console.log("raw response:", data.content?.[0]?.text);
 
   // Step 2: Extract JSON string from Claude
   const rawText = data.content?.[0]?.text ?? "";
