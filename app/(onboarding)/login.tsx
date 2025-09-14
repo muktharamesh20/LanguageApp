@@ -8,6 +8,7 @@ import { Image, Text, TextInput, TextStyle, TouchableOpacity, View } from 'react
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { supabase } from '@/constants/supabaseClient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -117,7 +118,7 @@ const login = () => {
 
           // Now you have a valid session!
           console.log('Session set!', data.session);
-
+          AsyncStorage.setItem('@userId', data!.session!.user.id ?? '');
           router.navigate('/(tabs)/home');
         } else {
           Alert.alert('Could not extract tokens from redirect URL');
