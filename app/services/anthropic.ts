@@ -77,9 +77,8 @@ export const sendToAnthropic = async (
 
     // Add conversation history if provided
     if (conversationHistory && conversationHistory.length > 0) {
-      // Limit conversation history to last 10 messages to avoid URL length issues
-      const recentHistory = conversationHistory.slice(-10);
-      const historyText = recentHistory
+      // Format the limited conversation history (last user message + last model response)
+      const historyText = conversationHistory
         .map(
           (msg) =>
             `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
