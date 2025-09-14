@@ -5,12 +5,12 @@ import { Link, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-  Image,
-  StyleSheet,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  View,
+    Image,
+    StyleSheet,
+    Text,
+    TextStyle,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -33,10 +33,10 @@ const Onboarding = () => {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      {isFocused ? <StatusBar style="light" /> : null}
+      {isFocused ? <StatusBar style="dark" /> : null}
 
       {/* Help button in upper right */}
-      <View
+      {/* <View
         style={{
           position: "absolute",
           top: insets.top + 15,
@@ -47,7 +47,7 @@ const Onboarding = () => {
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Text className="text-primary text-lg font-semibold">Help</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* Main content */}
       <View
