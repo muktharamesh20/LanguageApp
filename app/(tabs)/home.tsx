@@ -213,7 +213,7 @@ const Home = () => {
         <View style={styles.createButtons}>
           <TouchableOpacity
             style={styles.createButton}
-            onPress={() => {console.log("New Chat"); router.push("/(tabs)/chat")}}
+            onPress={() => {console.log("New Chat"); router.push("/create-chat");}}
           >
             <Text style={styles.createButtonText}>✨ Language Coach</Text>
           </TouchableOpacity>
