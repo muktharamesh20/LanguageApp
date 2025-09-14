@@ -41,7 +41,7 @@ export type Database = {
     Tables: {
       chat_histories: {
         Row: {
-          chat_associated: string | null
+          chat_associated: string
           created_at: string
           id: string
           text: string
@@ -49,7 +49,7 @@ export type Database = {
           user_spoke: boolean
         }
         Insert: {
-          chat_associated?: string | null
+          chat_associated: string
           created_at?: string
           id?: string
           text: string
@@ -57,7 +57,7 @@ export type Database = {
           user_spoke: boolean
         }
         Update: {
-          chat_associated?: string | null
+          chat_associated?: string
           created_at?: string
           id?: string
           text?: string
