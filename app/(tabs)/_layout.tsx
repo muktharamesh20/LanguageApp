@@ -1,4 +1,5 @@
 import { icons } from '@/constants/icons'
+import { images } from '@/constants/images'
 import { Tabs } from 'expo-router'
 import React from 'react'
 import { Image, View } from 'react-native'
@@ -65,51 +66,14 @@ const _layout = () => {
                     tabBarIcon: ({ focused }) => (
                         <TabIcon
                             focused={focused}
-                            icon={icons.calendar}
+                            icon={images.ai}
                             title="Chat"
                         />
                     ),
 
                 }} />
-            <Tabs.Screen
-                name="kanban"
-                options={{
-                    title: 'kanban',
-                    headerShown: false,
-                    tabBarIcon: ({ focused }) => (
-                        <TabIcon
-                            focused={focused}
-                            icon={icons.kanban}
-                            title="kanban"
-                        />
-                    )
-                }} />
-            <Tabs.Screen
-                name="messages"
-                options={{
-                    title: 'message',
-                    headerShown: false,
-                    tabBarIcon: ({ focused }) => (
-                        <TabIcon
-                            focused={focused}
-                            icon={icons.message}
-                            title="message"
-                        />
-                    )
-                }} />
-            <Tabs.Screen
-                name="myProfile"
-                options={{
-                    title: 'myProfile',
-                    headerShown: false,
-                    tabBarIcon: ({ focused }) => (
-                        <TabIcon
-                            focused={focused}
-                            icon={icons.person}
-                            title="myProfile"
-                        />
-                    )
-                }} />
+       
+           
         </Tabs>
     )
 }

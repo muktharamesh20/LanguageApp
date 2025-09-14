@@ -98,7 +98,7 @@ export default function CreateFlashcards() {
           <Text style={styles.label}>What is the collection about?</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter a name for your flashcard collection"
+            //placeholder="Enter a name for your flashcard collection"
             value={collectionName}
             onChangeText={setCollectionName}
             autoCapitalize="words"
@@ -110,7 +110,7 @@ export default function CreateFlashcards() {
           <Text style={styles.label}>What language are you learning?</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter language (e.g., Spanish, French, Japanese)"
+            //placeholder="Enter language (e.g., Spanish, French, Japanese)"
             value={language}
             onChangeText={setLanguage}
             autoCapitalize="words"
