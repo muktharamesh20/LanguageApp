@@ -42,18 +42,21 @@ export type Database = {
       chat_histories: {
         Row: {
           created_at: string
+          id: string
           text: string
           user_id: string
           user_spoke: boolean
         }
         Insert: {
           created_at?: string
+          id?: string
           text: string
           user_id?: string
           user_spoke: boolean
         }
         Update: {
           created_at?: string
+          id?: string
           text?: string
           user_id?: string
           user_spoke?: boolean
@@ -62,7 +65,7 @@ export type Database = {
           {
             foreignKeyName: "chat_histories_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "usersettings"
             referencedColumns: ["id"]
           },

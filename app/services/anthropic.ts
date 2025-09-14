@@ -1,6 +1,8 @@
 // Anthropic API service
 // Note: You'll need to install @anthropic-ai/sdk and set up your API key
 
+import { supabase } from "@/constants/supabaseClient";
+
 export interface AnthropicMessage {
   role: "user" | "assistant";
   content: string;
@@ -127,6 +129,8 @@ export const sendToAnthropic = async (
       JSON.stringify(data);
 
     console.log("Extracted content:", content);
+
+    await supabase.from('chat_histories').insert([{user_spoke: true, text: message}, {user_spoke: false, text: content}]);
 
     return {
       content: content,

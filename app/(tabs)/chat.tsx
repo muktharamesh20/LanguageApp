@@ -31,6 +31,25 @@ export default function Chat() {
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const initializeChat = async() => {
+      const welcomeMessages: Message[] = await supabase.from('chat_histories').select('*').order('created_at', {ascending: true}).then(res => {
+        if(res.error) {
+          console.error("Error fetching welcome messages:", res.error);
+          return [];
+        }
+        return res.data.map(item => ({
+          id: item.id.toString(),
+          text: item.text,
+          isUser: item.user_spoke,
+          timestamp: new Date(item.created_at),
+        }));
+      });
+      setMessages(welcomeMessages);
+    };
+    initializeChat();
+  }, []);
+
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -130,10 +149,12 @@ export default function Chat() {
         });
       }
 
+      const supabaseConversationHistory = (await supabase.from('chat_histories').select('*')).data;
       const response = await sendToAnthropic(
         userMessage.text,
         userContext,
-        conversationHistory
+        //conversationHistory
+        supabaseConversationHistory?.map((item) => ({role: item.user_spoke ? "user" : "assistant", content: item.text}))
       );
 
       if (response.error) {
