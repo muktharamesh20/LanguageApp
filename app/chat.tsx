@@ -105,12 +105,41 @@ export default function Chat() {
       };
 
       // Convert existing messages to conversation history format
-      const conversationHistory: ConversationMessage[] = messages.map(
-        (msg) => ({
-          role: msg.isUser ? "user" : "assistant",
-          content: msg.text,
-        })
-      );
+      // Only keep the last user message + last model response + current user message
+      const conversationHistory: ConversationMessage[] = [];
+
+      // Find the last user message and last assistant message from existing messages
+      let lastUserMessage: Message | null = null;
+      let lastAssistantMessage: Message | null = null;
+
+      // Iterate through messages in reverse to find the most recent ones
+      for (let i = messages.length - 1; i >= 0; i--) {
+        const msg = messages[i];
+        if (msg.isUser && !lastUserMessage) {
+          lastUserMessage = msg;
+        } else if (!msg.isUser && !lastAssistantMessage) {
+          lastAssistantMessage = msg;
+        }
+
+        // Stop if we found both
+        if (lastUserMessage && lastAssistantMessage) break;
+      }
+
+      // Add the last assistant message if it exists
+      if (lastAssistantMessage) {
+        conversationHistory.push({
+          role: "assistant",
+          content: lastAssistantMessage.text,
+        });
+      }
+
+      // Add the last user message if it exists
+      if (lastUserMessage) {
+        conversationHistory.push({
+          role: "user",
+          content: lastUserMessage.text,
+        });
+      }
 
       const response = await sendToAnthropic(
         userMessage.text,
