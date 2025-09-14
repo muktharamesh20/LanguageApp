@@ -101,7 +101,7 @@ const Onboarding = () => {
           </TouchableOpacity>
         </Link>
 
-        <Link href={"/(onboardingSlides)/onboard"} asChild>
+        <Link href={"/(onboarding)/signup"} asChild>
           <TouchableOpacity
             style={{
               borderColor: "#fffff",

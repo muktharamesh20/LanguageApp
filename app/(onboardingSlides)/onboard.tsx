@@ -1,4 +1,5 @@
 import { images } from "@/constants/images";
+import { supabase } from "@/constants/supabaseClient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -38,6 +39,8 @@ export default function OnboardingScreen() {
       await AsyncStorage.setItem("@user_language", language);
       await AsyncStorage.setItem("@user_level", level);
       await AsyncStorage.setItem("@user_purpose", purpose);
+
+      supabase.from("usersettings").upsert({name, language, level, purpose}).eq("id", (await AsyncStorage.getItem("@user_id")) || "");
       router.push("/(tabs)/home"); // navigate to main app
     } catch (e) {
       console.error("Failed to save user data:", e);
@@ -144,7 +147,7 @@ export default function OnboardingScreen() {
             source={images.butterfly}
             style={{ width: "80%", height: 300, resizeMode: "contain" }}
           />
-          <Text className="py-4 font-semibold text-[40px] text-secondary w-full text-center">We're all set!</Text>
+          <Text className="py-4 font-semibold text-[40px] text-secondary w-full text-center">You're all set!</Text>
           <Text style={styles.subtitle}>Start learning now.</Text>
 
           <TouchableOpacity
