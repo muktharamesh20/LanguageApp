@@ -106,6 +106,7 @@ export const sendToAnthropic = async (
 
     console.log("Response status:", response.status);
     console.log("Response ok:", response.ok);
+    console.log("anthropic",  await response)
 
     if (!response.ok) {
       const errorText = await response.text();

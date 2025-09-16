@@ -81,8 +81,7 @@ const signup = () => {
       if (userError) {
         console.error("Error saving user name:", userError);
       }
-
-      Alert.alert("Please check your inbox for email verification!");
+    router.navigate("/(onboardingSlides)/onboard");
     } else {
       Alert.alert("Please check your inbox for email verification!");
     }
