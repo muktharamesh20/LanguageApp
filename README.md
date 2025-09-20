@@ -1,7 +1,9 @@
-# Kikai 🎓🌍
+# Kikai 
 *Kikai is an AI-powered language learning app that adapts to you.*  
 
 Instead of following a rigid, one-size-fits-all curriculum, Kikai customizes learning paths based on your current level, goals, and preferred use cases (e.g., travel, professional, casual). Our mission is to make language learning more accessible—especially for learners of lower-resourced languages—by combining flashcards, conversation practice, and adaptive AI coaching into one seamless mobile experience.
+
+<img width="1124" height="670" alt="image" src="https://github.com/user-attachments/assets/d81ba0a6-95db-48e0-b6a9-58dd38630044" />
 
 ---
 
